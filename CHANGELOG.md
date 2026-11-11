@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.1 (sin publicar)
+
+- Corrige macOS: se aceptan enlaces simbólicos en directorios padres del proyecto (`/tmp` y `/var/folders` cuelgan de `/var`, enlace a `/private/var`). Siguen rechazados el proyecto que es un enlace y los enlaces dentro del proyecto.
+- CI: el workflow instala `setuptools` y `wheel` antes de las pruebas (el runner de Python 3.12 no los trae).
+- La versión en `reinstack.py` y `pyproject.toml` sigue en 1.0.0 hasta publicar: las aceptaciones congeladas la fijan.
+
 ## 1.0.0
 
 - Primera versión pública, licencia MIT.

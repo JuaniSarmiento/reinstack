@@ -47,7 +47,7 @@ class IdiomasTests(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()
         self.addCleanup(self.tmp.cleanup)
-        self.base = Path(self.tmp.name)
+        self.base = Path(self.tmp.name).resolve()  # HU-OS7: los scripts viejos de tests/fixtures rechazan padres enlazados (/var en macOS)
         self.home = self.base / "home"
         (self.home / ".claude").mkdir(parents=True)
         (self.home / ".codex").mkdir(parents=True)

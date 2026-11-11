@@ -34,7 +34,7 @@ class ArchivosBaseTests(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()
         self.addCleanup(self.tmp.cleanup)
-        base = Path(self.tmp.name)
+        base = Path(self.tmp.name).resolve()  # HU-OS7: los scripts viejos de tests/fixtures rechazan padres enlazados (/var en macOS)
         self.root = base / "proyecto"
         self.root.mkdir()
         self.home = base / "home"

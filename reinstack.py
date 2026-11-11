@@ -333,9 +333,10 @@ class ReinError(Exception):
 
 def checked_root(value: str) -> Path:
     root = Path(os.path.abspath(os.path.expanduser(value)))
-    for item in (root, *root.parents):
-        if item.is_symlink():
-            raise ReinError(t("symlink_path", path=item))
+    if root.is_symlink():
+        raise ReinError(t("symlink_path", path=root))
+    # Los enlaces en directorios padres (p. ej. /var -> /private/var en macOS) son legítimos: se resuelven.
+    root = root.parent.resolve() / root.name
     if not root.is_dir():
         raise ReinError(t("root_not_dir", path=root))
     return root
