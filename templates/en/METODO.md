@@ -24,13 +24,27 @@ One builder per story, with a brief limited to the context it needs. Which model
 
 ## Story brief
 
-Inside STORIES.md, record: identifier, status, observable goal, scope and exclusions, acceptance criteria with identifiers, difficulty, risks, dependencies and demo script. Add technical decisions only when they help execution. Difficulty and risk are different: a small change can affect sensitive data.
+Inside STORIES.md, record: identifier, status, observable goal, scope and exclusions, acceptance criteria with identifiers, level and why, difficulty, risks, dependencies and demo script. Add technical decisions only when they help execution. Difficulty and risk are different: a small change can affect sensitive data.
 
-- Low: bounded change, focused checks.
-- Medium: integration or relevant logic, edge examples and focused regression tests; TDD where it helps.
-- High or high risk: investigate uncertainties before building, edge and failure tests, TDD on critical logic and adversarial review with an independent approach.
+The level (S, M or L) decides how much ceremony the story carries: see Levels.
 
 An adversarial review can be a session independent of the orchestrator; it does not require a third installed profile. Switching models may help, but it guarantees neither independence nor correctness. Set a budget and a stopping condition for investigations; an investigation can be closed with a negative result, without presenting a feature that does not exist.
+
+## Levels
+
+A story's level is the higher of its difficulty (how much work and uncertainty it has) and its risk (what breaks if it goes wrong): a small change that touches sensitive data is L. Each story records its level and why.
+
+| | S · small | M · normal | L · large or risky |
+|---|---|---|---|
+| When | Local, reversible, no sensitive data and no system in use | New logic, several pieces, or touches something in use with a backup | High uncertainty, sensitive data, something irreversible, publishing or touching someone else's configuration |
+| Acceptance | One test seen to fail, in the same commit | Frozen with a SHA before building | Frozen, plus edge and failure cases |
+| Built by | The orchestrator directly or the builder | The builder | The builder, with prior research if there is uncertainty |
+| Verification | Run the test and show the output | From the SHA, in a separate environment | From the SHA, plus the real environment (CI, dry-run on the person's machine) and independent adversarial review |
+| Demo | A report with evidence; can be accepted in a batch | Short | Criterion by criterion |
+
+Unchanged at every level: only the person marks Done; a test counts only if it was seen to fail by assertion, not by a setup error; everything goes on the board (the project's story register).
+
+The orchestrator proposes the level with its why and the person confirms. If the story grows, it goes up a level and is noted on the story; it never goes down midway.
 
 ## Acceptance before implementation
 

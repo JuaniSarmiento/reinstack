@@ -15,8 +15,8 @@ Contrato:
       repetirlo no cambia nada; `global --lang es` lo vuelve al español reemplazando sólo dentro de las marcas.
   C05 Con la locale en inglés, `--help` y los errores salen en inglés.
   C06 El inglés instalado no tiene restos de español (sin contar los nombres de archivo en mayúsculas).
-  C07 Con `--lang es`, la instalación por proyecto y la global son byte a byte las de la 0.3.0 (salvo .rein/manifest.json y ~/.rein/global.json).
-  C08 `--version` es 1.0.0 (era 0.4.0; HU-OS5, con OK de Juani).
+  C07 Con `--lang es`, lo instalado es el texto de las plantillas en español (HU-OS8, con OK de Juani: antes exigía bytes iguales a la 0.3.0).
+  C08 `--version` es la de pyproject.toml (HU-OS8: sin números fijos).
 Correr: python3 -m unittest tests.test_idiomas -v   (la 0.3.0 vive en tests/fixtures/0.3.0).
 """
 import io
@@ -28,9 +28,11 @@ import subprocess
 import sys
 import tarfile
 import tempfile
+import tomllib
 import unittest
 
 RAIZ = Path(__file__).resolve().parents[1]
+VERSION_ACTUAL = tomllib.loads((RAIZ / "pyproject.toml").read_text(encoding="utf-8"))["project"]["version"]  # HU-OS8: sin números fijos
 SCRIPT = RAIZ / "reinstack.py"
 VIEJO = "0.3.0"  # tests/fixtures/<versión>: la 0.3.0 congelada (antes `git archive 4bfc29c`)
 CONTEXTO_EN = ["## Problem", "## Who it's for", "## What it is and isn't", "## Domain rules", "## Glossary", "## Stack and decisions"]
@@ -162,26 +164,19 @@ class IdiomasTests(unittest.TestCase):
                 with self.subTest(plantilla=f.name):
                     self.assertEqual(restos(f.read_text(encoding="utf-8")), [])
 
-    def test_c07_espanol_igual_que_030(self):
-        nuevo, viejo = self.proyecto("nuevo"), self.proyecto("viejo030")
-        self.cli("install", nuevo, "--agent", "both", "--lang", "es")
-        self.cli("install", viejo, "--agent", "both", script=self.viejo())
-        fuera = (".rein/manifest.json",)
-        self.assertEqual(self.arbol(nuevo, fuera), self.arbol(viejo, fuera))
+    def test_c07_espanol_es_la_plantilla(self):
+        p = self.proyecto("es")
+        self.cli("install", p, "--agent", "both", "--lang", "es")
+        self.assertEqual((p / ".rein" / "METODO.md").read_bytes(), (RAIZ / "templates" / "METODO.md").read_bytes())
+        self.assertTrue((p / "CONTEXTO.md").is_file() and (p / "HISTORIAS.md").is_file())
         self.cli("global", "--lang", "es")
-        g_nuevo = self.arbol(self.home, (".rein/global.json",))
-        self.tmp2 = tempfile.TemporaryDirectory()
-        self.addCleanup(self.tmp2.cleanup)
-        home_nuevo = self.home
-        self.home = Path(self.tmp2.name) / "home"
-        (self.home / ".claude").mkdir(parents=True)
-        (self.home / ".codex").mkdir(parents=True)
-        self.cli("global", script=self.viejo())
-        self.assertEqual(g_nuevo, self.arbol(self.home, (".rein/global.json",)))
-        self.home = home_nuevo
+        bloque = (RAIZ / "templates" / "global.md").read_text(encoding="utf-8").strip()
+        self.assertIn(bloque, (self.home / ".claude" / "CLAUDE.md").read_text(encoding="utf-8"))
+        self.assertIn(bloque, (self.home / ".codex" / "AGENTS.md").read_text(encoding="utf-8"))
+        self.assertIn("Sos Rein", (self.home / ".claude" / "output-styles" / "rein.md").read_text(encoding="utf-8"))
 
     def test_c08_version(self):
-        self.assertEqual(self.cli("--version").stdout.strip(), "1.0.0")
+        self.assertEqual(self.cli("--version").stdout.strip(), VERSION_ACTUAL)
 
 
 if __name__ == "__main__":

@@ -24,13 +24,27 @@ Un constructor por historia, con un brief acotado al contexto que necesita. Qué
 
 ## Brief de una historia
 
-Dentro de HISTORIAS.md, registrar: identificador, estado, objetivo observable, alcance y exclusiones, criterios de aceptación con identificadores, dificultad, riesgos, dependencias y guion de demo. Añadir decisiones técnicas sólo cuando ayuden a ejecutar. Dificultad y riesgo son distintos: una modificación pequeña puede afectar datos sensibles.
+Dentro de HISTORIAS.md, registrar: identificador, estado, objetivo observable, alcance y exclusiones, criterios de aceptación con identificadores, nivel y porqué, dificultad, riesgos, dependencias y guion de demo. Añadir decisiones técnicas sólo cuando ayuden a ejecutar. Dificultad y riesgo son distintos: una modificación pequeña puede afectar datos sensibles.
 
-- Baja: cambio acotado, comprobaciones focalizadas.
-- Media: integración o lógica relevante, ejemplos de borde y pruebas de regresión focalizadas; TDD donde aporte.
-- Alta o riesgo alto: investigar incertidumbres antes de construir, pruebas de bordes y fallos, TDD en lógica crítica y revisión adversarial con enfoque independiente.
+El nivel (S, M o L) decide cuánta ceremonia lleva la historia: ver Niveles.
 
 Una revisión adversarial puede ser una sesión independiente del orquestador; no exige un tercer perfil instalado. Cambiar de modelo puede ayudar, pero no garantiza independencia ni corrección. Fijar presupuesto y condición de parada para investigaciones; se puede cerrar una investigación con resultado negativo, sin presentar una funcionalidad inexistente.
+
+## Niveles
+
+El nivel de una historia es el mayor entre su dificultad (cuánto trabajo e incertidumbre tiene) y su riesgo (qué se rompe si sale mal): una modificación pequeña que toca datos sensibles es L. Cada historia registra su nivel y el porqué.
+
+| | S · chica | M · normal | L · grande o riesgosa |
+|---|---|---|---|
+| Cuándo | Local, reversible, sin datos sensibles ni sistema en uso | Lógica nueva, varias piezas, o toca algo en uso con respaldo | Incertidumbre alta, datos sensibles, algo irreversible, publicar o tocar configuración ajena |
+| Aceptación | Una prueba que se vio fallar, en el mismo commit | Congelada con SHA antes de construir | Congelada, más casos de borde y de fallo |
+| Construye | El orquestador directo o el constructor | El constructor | El constructor, con investigación previa si hay incertidumbre |
+| Verificación | Correr la prueba y mostrar la salida | Desde el SHA, en un entorno separado | Desde el SHA, más el entorno real (CI, dry-run en la máquina de la persona) y revisión adversarial independiente |
+| Demo | Un reporte con evidencia; se puede aceptar en lote | Corta | Criterio por criterio |
+
+No cambia en ningún nivel: sólo la persona marca Terminada; una prueba cuenta sólo si se la vio fallar por aserción, no por error de setup; todo va al tablero (el registro de historias del proyecto).
+
+El orquestador propone el nivel con su porqué y la persona lo confirma. Si la historia crece, sube de nivel y queda anotado en la historia; nunca baja a mitad de camino.
 
 ## Aceptación antes de implementación
 

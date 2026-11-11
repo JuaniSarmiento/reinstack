@@ -49,9 +49,12 @@ class GlobalIdiomaTests(unittest.TestCase):
         antes = self.arbol()
         self.cli(lang="C")
         despues = self.arbol()
-        cambiados = [n for n in despues if despues[n] != antes.get(n)]
-        self.assertEqual(cambiados, [".rein/global.json"])
+        # HU-OS8: el método puede cambiar entre versiones; lo que importa es que con LANG=C siga en español.
         self.assertEqual(json.loads(despues[".rein/global.json"])["lang"], "es")
+        claude = despues[".claude/CLAUDE.md"].decode("utf-8")
+        self.assertIn((RAIZ / "templates" / "global.md").read_text(encoding="utf-8").strip(), claude)
+        self.assertNotIn((RAIZ / "templates" / "en" / "global.md").read_text(encoding="utf-8").strip(), claude)
+        self.assertIn("Sos Rein", despues[".claude/output-styles/rein.md"].decode("utf-8"))
         self.assertIn("Rein: método de trabajo", (self.home / ".claude" / "CLAUDE.md").read_text(encoding="utf-8"))
 
     def test_lang_explicito_reemplaza(self):

@@ -11,6 +11,7 @@ La historia vive en HISTORIAS.md, por ejemplo:
 ```md
 ### HU01 — Guardar mi primer lugar
 Estado: Pendiente
+Nivel y porqué: M; lógica nueva con persistencia, sin datos sensibles
 Dificultad: Media
 Riesgo: Bajo; datos personales locales
 
@@ -28,6 +29,8 @@ Casos esperados: C01, C02, C03.
 Comando: pendiente según el stack.
 Demo: marcar, nombrar, guardar, recargar y probar nombre vacío.
 ```
+
+El nivel (S, M o L) es el mayor entre dificultad y riesgo y decide la ceremonia: el orquestador lo propone con su porqué y la persona lo confirma. Si la historia crece, sube; nunca baja.
 
 Una historia inicial también incluye cómo arrancar el proyecto y cómo ejecutar su verificación. Las capas se construyen juntas en función del comportamiento; no son tres historias separadas.
 

@@ -11,7 +11,7 @@ Contrato:
   C04 METODO.md, los perfiles de orquestador y constructor y el bloque puente nombran CONTEXTO.md; METODO.md dice que se
       escribe en la «historia 0» y que ORQUESTADOR.md puede ser un enlace a una nota externa. obsidian.md queda sólo como
       compatibilidad: METODO.md lo nombra a lo sumo dos veces.
-  C05 VERSION es 1.0.0 (fue 0.3.0 y 0.4.0; HU-OS5 la sube a 1.0.0 con OK de Juani. Era 0.3.0; cambiado el 11/11 con OK de Juani porque HU-OS4 agrega el idioma al manifiesto). `update` sobre una instalación hecha con la 0.2.0 (commit 82992b8) agrega CONTEXTO.md sin tocar
+  C05 VERSION es la de pyproject.toml (HU-OS8, con OK de Juani: sin números fijos; fue 0.3.0, 0.4.0 y 1.0.0; HU-OS5 la sube a 1.0.0 con OK de Juani. Era 0.3.0; cambiado el 11/11 con OK de Juani porque HU-OS4 agrega el idioma al manifiesto). `update` sobre una instalación hecha con la 0.2.0 (commit 82992b8) agrega CONTEXTO.md sin tocar
       README.md, HISTORIAS.md ni ORQUESTADOR.md; y no lo crea si el proyecto ya tenía uno.
 Correr: python3 -m unittest tests.test_archivos_base -v
 """
@@ -22,9 +22,11 @@ import subprocess
 import sys
 import tarfile
 import tempfile
+import tomllib
 import unittest
 
 RAIZ = Path(__file__).resolve().parents[1]
+VERSION_ACTUAL = tomllib.loads((RAIZ / "pyproject.toml").read_text(encoding="utf-8"))["project"]["version"]  # HU-OS8: sin números fijos
 SCRIPT = RAIZ / "reinstack.py"
 SECCIONES = ["## Problema", "## Para quién", "## Qué es y qué no", "## Reglas del dominio", "## Glosario", "## Stack y decisiones"]
 VIEJO = "0.2.0"  # tests/fixtures/<versión>: la 0.2.0 congelada (antes `git archive 82992b8`)
@@ -116,7 +118,7 @@ class ArchivosBaseTests(unittest.TestCase):
 
     def test_c05_version_y_update(self):
         r = self.cli("--version")
-        self.assertEqual(r.stdout.strip(), "1.0.0")
+        self.assertEqual(r.stdout.strip(), VERSION_ACTUAL)
         self.cli("install", self.root, "--agent", "both", script=self.viejo())
         self.assertFalse((self.root / "CONTEXTO.md").exists(), "la 0.2.0 no conocía CONTEXTO.md")
         docs = {n: (self.root / n).read_bytes() for n in ("README.md", "HISTORIAS.md", "ORQUESTADOR.md")}
@@ -131,7 +133,7 @@ class ArchivosBaseTests(unittest.TestCase):
         (self.root / "CONTEXTO.md").write_text("mío\n", encoding="utf-8")
         self.cli("update", self.root)
         self.assertEqual((self.root / "CONTEXTO.md").read_text(encoding="utf-8"), "mío\n")
-        self.assertIn('"version": "1.0.0"', (self.root / ".rein" / "manifest.json").read_text(encoding="utf-8"), "quedó en 1.0.0")
+        self.assertIn(f'"version": "{VERSION_ACTUAL}"', (self.root / ".rein" / "manifest.json").read_text(encoding="utf-8"), "quedó en la versión actual")
 
 
 if __name__ == "__main__":

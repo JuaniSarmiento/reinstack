@@ -15,7 +15,7 @@ import re
 import sys
 import tempfile
 
-VERSION = "1.0.0"
+VERSION = "1.1.0"
 MANIFEST = ".rein/manifest.json"
 PENDING = ".rein/manifest.pending.json"
 START = "<!-- REINSTACK BEGIN -->"
@@ -72,11 +72,12 @@ SEEDS = {
         "README.md": "# Proyecto\n\n## Objetivo y alcance\nPor acordar con la persona.\n\n## Stack y ejecución\nPor definir.\n",
         "HISTORIAS.md": (
             "# Historias\n\nEstados: Pendiente · En proceso · Lista · Terminada.\n\n"
-            "| HU | Resultado esperado | Dificultad / riesgo | Estado |\n"
-            "|---|---|---|---|\n\n"
+            "| HU | Resultado esperado | Nivel | Dificultad / riesgo | Estado |\n"
+            "|---|---|---|---|---|\n\n"
             "## Plantilla de historia\n"
             "- Resultado para la persona:\n- Alcance y exclusiones:\n"
             "- Criterios de aceptación (identificadores y ejemplos):\n"
+            "- Nivel y porqué (S, M o L: el mayor entre dificultad y riesgo):\n"
             "- Dificultad y riesgos:\n- Brief y archivos relevantes:\n"
             "- Aceptación aprobada: SHA, comando y casos esperados:\n"
             "- Evidencia, demo y aprobación humana:\n"
@@ -104,11 +105,12 @@ SEEDS = {
         "README.md": "# Project\n\n## Goal and scope\nTo be agreed with the person.\n\n## Stack and how to run\nTo be defined.\n",
         "STORIES.md": (
             "# Stories\n\nStates: Pending · In progress · Ready · Done.\n\n"
-            "| Story | Expected result | Difficulty / risk | Status |\n"
-            "|---|---|---|---|\n\n"
+            "| Story | Expected result | Level | Difficulty / risk | Status |\n"
+            "|---|---|---|---|---|\n\n"
             "## Story template\n"
             "- Result for the person:\n- Scope and exclusions:\n"
             "- Acceptance criteria (identifiers and examples):\n"
+            "- Level and why (S, M or L: the higher of difficulty and risk):\n"
             "- Difficulty and risks:\n- Brief and relevant files:\n"
             "- Approved acceptance: SHA, command and expected cases:\n"
             "- Evidence, demo and human approval:\n"

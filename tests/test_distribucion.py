@@ -1,29 +1,33 @@
-"""Aceptación HU-OS5: distribución (licencia, paquete instalable, CI, limpieza y 1.0.0).
+"""Aceptación HU-OS5: distribución (licencia, paquete instalable, CI, limpieza y versión coherente).
 
 Escrita por el orquestador ANTES de implementar; criterios aprobados por Juani el 11/11/2026. El constructor no la modifica.
 Contrato:
   C01 LICENSE es MIT, a nombre de Juani Sarmiento, 2026.
-  C02 pyproject.toml sin dependencias, Python >= 3.11, comando de consola `reinstack`, versión 1.0.0.
+  C02 pyproject.toml sin dependencias, Python >= 3.11, comando de consola `reinstack` (HU-OS8: la versión no se fija acá).
       `python3 reinstack.py` desde el clon sigue funcionando (lo cubren las demás aceptaciones).
   C03 Se construye el wheel (pip wheel --no-deps --no-build-isolation, sin red), se instala en un venv limpio sin red y,
       desde un directorio ajeno al repo, `reinstack --version`, `reinstack install`, `reinstack global` y `reinstack tone`
       funcionan con las plantillas del paquete (en español y en inglés).
   C04 .github/workflows/ tiene un workflow que corre `python -m unittest discover -s tests` en ubuntu-latest y macos-latest,
       con Python 3.11 y 3.12, y una corrida con LANG=C.
-  C05 Limpieza: no existe informes/; CHANGELOG.md tiene la 1.0.0; README.md y README.en.md dicen que Windows no está soportado;
+  C05 Limpieza: no existe informes/; CHANGELOG.md tiene la versión actual; README.md y README.en.md dicen que Windows no está soportado;
       ningún archivo versionado (salvo tests/fixtures y este archivo) contiene «/home/», «Cerebro» ni «Jarvis».
-  C06 `reinstack.py --version` es 1.0.0 (también fijado en test_archivos_base C05 y test_idiomas C08).
+  C06 (HU-OS8, con OK de Juani) la versión es coherente: `reinstack.py --version` = pyproject.toml = el primer título con versión
+      del CHANGELOG, y tiene forma X.Y.Z.
 Correr: python3 -m unittest tests.test_distribucion -v
 """
 import os
+import re
 from pathlib import Path
 import subprocess
 import sys
 import tempfile
 import tomllib
+import tomllib
 import unittest
 
 RAIZ = Path(__file__).resolve().parents[1]
+VERSION_ACTUAL = tomllib.loads((RAIZ / "pyproject.toml").read_text(encoding="utf-8"))["project"]["version"]  # HU-OS8: sin números fijos
 
 
 def versionados() -> list[Path]:
@@ -46,7 +50,6 @@ class DistribucionTests(unittest.TestCase):
         self.assertTrue(p.is_file(), "existe pyproject.toml")
         d = tomllib.loads(p.read_text(encoding="utf-8"))["project"]
         self.assertEqual(d["name"], "reinstack")
-        self.assertEqual(d["version"], "1.0.0")
         self.assertEqual(d.get("dependencies", []), [])
         self.assertIn("3.11", d["requires-python"])
         self.assertIn("reinstack", d["scripts"])
@@ -60,8 +63,8 @@ class DistribucionTests(unittest.TestCase):
         r = subprocess.run([sys.executable, "-m", "pip", "wheel", "--no-deps", "--no-build-isolation", "-w", str(base / "dist"), str(RAIZ)],
                            capture_output=True, text=True, timeout=300)
         self.assertEqual(r.returncode, 0, r.stdout[-2000:] + r.stderr[-2000:])
-        wheels = list((base / "dist").glob("reinstack-1.0.0-*.whl"))
-        self.assertEqual(len(wheels), 1, f"un wheel 1.0.0: {list((base / 'dist').iterdir())}")
+        wheels = list((base / "dist").glob(f"reinstack-{VERSION_ACTUAL}-*.whl"))
+        self.assertEqual(len(wheels), 1, f"un wheel {VERSION_ACTUAL}: {list((base / 'dist').iterdir())}")
         subprocess.run([sys.executable, "-m", "venv", str(base / "venv")], check=True, timeout=120)
         py = base / "venv" / "bin" / "python"
         r = subprocess.run([str(py), "-m", "pip", "install", "--no-index", "--no-deps", str(wheels[0])], capture_output=True, text=True, timeout=300)
@@ -81,7 +84,7 @@ class DistribucionTests(unittest.TestCase):
             self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
             return r.stdout
 
-        self.assertEqual(correr("--version").strip(), "1.0.0")
+        self.assertEqual(correr("--version").strip(), VERSION_ACTUAL)
         es, en = base / "es", base / "en"
         es.mkdir(); en.mkdir()
         correr("install", es, "--lang", "es")
@@ -105,7 +108,7 @@ class DistribucionTests(unittest.TestCase):
         self.assertFalse((RAIZ / "informes").exists(), "sin informes/")
         ch = RAIZ / "CHANGELOG.md"
         self.assertTrue(ch.is_file(), "existe CHANGELOG.md")
-        self.assertIn("1.0.0", ch.read_text(encoding="utf-8"))
+        self.assertIn(VERSION_ACTUAL, ch.read_text(encoding="utf-8"))
         for readme in ("README.md", "README.en.md"):
             self.assertIn("Windows", (RAIZ / readme).read_text(encoding="utf-8"), readme)
         sucios = []
@@ -124,7 +127,11 @@ class DistribucionTests(unittest.TestCase):
 
     def test_c06_version(self):
         r = subprocess.run([sys.executable, str(RAIZ / "reinstack.py"), "--version"], capture_output=True, text=True)
-        self.assertEqual(r.stdout.strip(), "1.0.0")
+        self.assertEqual(r.stdout.strip(), VERSION_ACTUAL)
+        self.assertRegex(VERSION_ACTUAL, r"^\d+\.\d+\.\d+$")
+        primera = re.search(r"(?m)^#+ .*?(\d+\.\d+\.\d+)", (RAIZ / "CHANGELOG.md").read_text(encoding="utf-8"))
+        self.assertIsNotNone(primera, "el CHANGELOG tiene versiones")
+        self.assertEqual(primera.group(1), VERSION_ACTUAL, "el primer título del CHANGELOG es la versión actual")
 
 
 if __name__ == "__main__":

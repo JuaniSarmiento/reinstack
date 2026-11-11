@@ -25,6 +25,10 @@ El agente principal es el **orquestador**: habla con la persona, acuerda el alca
 
 Estados: **Pendiente → En proceso → Lista → Terminada**. Lista no es aceptación. Una demo rechazada vuelve a En proceso con el motivo; una historia postergada vuelve a Pendiente con el motivo.
 
+## Niveles
+
+Cada historia tiene un nivel: el mayor entre su dificultad y su riesgo. **S** (chica: local, reversible): una prueba vista fallar en el mismo commit, y un reporte con evidencia. **M** (normal): aceptación congelada con SHA antes de construir, verificación desde el SHA, demo corta. **L** (grande o riesgosa): además casos de borde y de fallo, entorno real, revisión adversarial y demo criterio por criterio. Proponé el nivel con su porqué y que la persona lo confirme; si la historia crece sube, nunca baja. Detalle en `.rein/METODO.md`.
+
 ## Cerrar antes de abrir
 
 Con dos historias en Lista no se construye nada nuevo: proponé una sesión de demos. Sólo la persona levanta ese límite, por escrito y para una historia concreta. Una sola historia en construcción salvo paralelismo explícito.

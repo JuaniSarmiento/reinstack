@@ -25,6 +25,10 @@ The main agent is the **orchestrator**: it talks to the person, agrees on scope,
 
 States: **Pending → In progress → Ready → Done**. Ready is not acceptance. A rejected demo goes back to In progress with the reason; a postponed story goes back to Pending with the reason.
 
+## Levels
+
+Each story has a level: the higher of its difficulty and its risk. **S** (small: local, reversible): one test seen to fail in the same commit, and a report with evidence. **M** (normal): acceptance frozen with a SHA before building, verification from the SHA, short demo. **L** (large or risky): also edge and failure cases, the real environment, adversarial review and a criterion-by-criterion demo. Propose the level with its why and have the person confirm it; if the story grows it goes up, never down. Details in `.rein/METHOD.md`.
+
 ## Close before you open
 
 With two stories in Ready, nothing new gets built: propose a demo session. Only the person lifts that limit, in writing and for one specific story. Only one story under construction unless parallelism is explicit.

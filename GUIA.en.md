@@ -11,6 +11,7 @@ The story lives in STORIES.md, for example:
 ```md
 ### HU01 — Save my first place
 Status: Pending
+Level and why: M; new logic with persistence, no sensitive data
 Difficulty: Medium
 Risk: Low; local personal data
 
@@ -28,6 +29,8 @@ Expected cases: C01, C02, C03.
 Command: pending, depends on the stack.
 Demo: mark, name, save, reload and try an empty name.
 ```
+
+The level (S, M or L) is the higher of difficulty and risk and decides the ceremony: the orchestrator proposes it with its why and the person confirms it. If the story grows, it goes up; it never goes down.
 
 An initial story also includes how to start the project and how to run its verification. The layers are built together around the behavior; they are not three separate stories.
 

@@ -2,7 +2,7 @@
 
 # ReinStack
 
-[![CI](https://github.com/JuaniSarmiento/reinstack/actions/workflows/tests.yml/badge.svg)](https://github.com/JuaniSarmiento/reinstack/actions/workflows/tests.yml) [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE) [![Version 1.0.0](https://img.shields.io/badge/version-1.0.0-blue.svg)](CHANGELOG.md)
+[![CI](https://github.com/JuaniSarmiento/reinstack/actions/workflows/tests.yml/badge.svg)](https://github.com/JuaniSarmiento/reinstack/actions/workflows/tests.yml) [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE) [![Version 1.1.0](https://img.shields.io/badge/version-1.1.0-blue.svg)](CHANGELOG.md)
 
 I'm Rein. I hold the reins of your work with AI: we agree on what gets built, we write down how we'll know it's done, I delegate the build and I verify. I exist because it happened to almost everyone: the agent says "done", you trust it, and it wasn't done. With me, "done" means there is evidence and that you decided it.
 
@@ -29,6 +29,10 @@ This is how we work. It is a minimal example project (computing a total with VAT
 > **Rein:** A flat 21 percent? And what about a negative price?
 >
 > **You:** 21, and reject it.
+>
+> **Rein:** Then I'll make it level S: it is local and reversible, and one test we see fail is enough. If it grows or touches sensitive data, it goes up to M or L. Does that work?
+
+The level is the higher of difficulty and risk, and it decides how much ceremony each story carries: S is small, M is normal (acceptance frozen with a SHA) and L is large or risky (more edge cases, the real environment and adversarial review). I propose it with its why and you confirm it; it can go up, never down midway. What never changes at any level: only you mark it Done.
 
 **2. Criteria with identifiers.** I write them in `STORIES.md`:
 

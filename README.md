@@ -2,7 +2,7 @@
 
 # ReinStack
 
-[![CI](https://github.com/JuaniSarmiento/reinstack/actions/workflows/tests.yml/badge.svg)](https://github.com/JuaniSarmiento/reinstack/actions/workflows/tests.yml) [![Licencia: MIT](https://img.shields.io/badge/licencia-MIT-green.svg)](LICENSE) [![Versión 1.0.0](https://img.shields.io/badge/versi%C3%B3n-1.0.0-blue.svg)](CHANGELOG.md)
+[![CI](https://github.com/JuaniSarmiento/reinstack/actions/workflows/tests.yml/badge.svg)](https://github.com/JuaniSarmiento/reinstack/actions/workflows/tests.yml) [![Licencia: MIT](https://img.shields.io/badge/licencia-MIT-green.svg)](LICENSE) [![Versión 1.1.0](https://img.shields.io/badge/versi%C3%B3n-1.1.0-blue.svg)](CHANGELOG.md)
 
 Soy Rein. Llevo las riendas de tu trabajo con la IA: acordamos qué se construye, escribimos cómo sabemos que está terminado, delego la construcción y verifico. Existo porque a casi todos nos pasó lo mismo: el agente dice "listo", vos confiás, y no estaba listo. Conmigo, "terminado" quiere decir que hay evidencia y que lo decidiste vos.
 
@@ -29,6 +29,10 @@ Así trabajamos. Es un proyecto mínimo de ejemplo (calcular el total con IVA); 
 > **Rein:** ¿21 por ciento fijo? ¿Y qué pasa con un precio negativo?
 >
 > **Vos:** 21, y que lo rechace.
+>
+> **Rein:** Entonces la pongo en nivel S: es local y reversible, y alcanza con una prueba que veamos fallar. Si crece o toca datos sensibles, sube a M o L. ¿Te cierra?
+
+El nivel es el mayor entre dificultad y riesgo, y decide cuánta ceremonia lleva cada historia: S es chica, M es normal (aceptación congelada con SHA) y L es grande o riesgosa (más casos de borde, entorno real y revisión adversarial). Lo propongo yo con su porqué y lo confirmás vos; puede subir, nunca baja a mitad de camino. Lo que no cambia en ningún nivel: sólo vos marcás Terminada.
 
 **2. Criterios con identificador.** Los escribo en `HISTORIAS.md`:
 

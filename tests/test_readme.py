@@ -4,7 +4,7 @@ Escrita por el orquestador ANTES de implementar; criterios aprobados por Juani e
 La comparación con BMAD y Spec Kit (C03) y que la salida mostrada sea real (C02) los revisa el orquestador a mano.
 Contrato:
   C01 Primera pantalla (primeras 40 líneas) de README.md y README.en.md: la imagen assets/rein.png, badges de CI
-      (actions/workflows/tests.yml/badge.svg), licencia MIT y versión 1.0.0, e instalación con
+      (actions/workflows/tests.yml/badge.svg), licencia MIT y la versión actual (HU-OS8: la de pyproject.toml), e instalación con
       `uvx --from git+https://github.com/JuaniSarmiento/reinstack reinstack` y `reinstack global`.
   C08 Lo cuenta Rein: el primer párrafo de texto dice «Soy Rein» (es) / «I'm Rein» (en).
   C02 Una sección «… de punta a punta» / «… end to end» con bloques de código y que nombra el SHA y Terminada / Done.
@@ -24,9 +24,11 @@ import shlex
 import subprocess
 import sys
 import tempfile
+import tomllib
 import unittest
 
 RAIZ = Path(__file__).resolve().parents[1]
+VERSION_ACTUAL = tomllib.loads((RAIZ / "pyproject.toml").read_text(encoding="utf-8"))["project"]["version"]  # HU-OS8: sin números fijos
 READMES = {"es": RAIZ / "README.md", "en": RAIZ / "README.en.md"}
 FIRMA = {"es": "Soy Rein", "en": "I'm Rein"}
 PUNTA = {"es": re.compile(r"^## .*punta a punta", re.M | re.I), "en": re.compile(r"^## .*end to end", re.M | re.I)}
@@ -52,7 +54,7 @@ class ReadmeTests(unittest.TestCase):
         for lang in READMES:
             with self.subTest(lang=lang):
                 top = "\n".join(leer(lang).splitlines()[:40])
-                for clave in ("assets/rein.png", "actions/workflows/tests.yml/badge.svg", "MIT", "1.0.0",
+                for clave in ("assets/rein.png", "actions/workflows/tests.yml/badge.svg", "MIT", VERSION_ACTUAL,
                               "uvx --from git+https://github.com/JuaniSarmiento/reinstack reinstack", "reinstack global"):
                     self.assertIn(clave, top, clave)
 

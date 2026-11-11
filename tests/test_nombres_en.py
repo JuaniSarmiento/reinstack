@@ -11,7 +11,7 @@ Contrato:
       y siembra CONTEXT.md si falta (nunca CONTEXTO.md).
   C11 Los dos nombres funcionan en cualquier idioma (tone/tono, --state/--estado, --no-tone/--sin-tono, --remove/--quitar);
       `--help` muestra el del idioma de la locale y no el otro.
-  C12 (cubierto por test_idiomas C07) el español queda byte a byte como la 0.3.0.
+  C12 (cubierto por test_idiomas C07) el español instalado es el de las plantillas en español.
 Correr: python3 -m unittest tests.test_nombres_en -v
 """
 import os

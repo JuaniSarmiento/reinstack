@@ -1,10 +1,10 @@
 # Changelog
 
-## 1.0.1 (sin publicar)
+## 1.1.0
 
+- Niveles de historia S, M y L: el nivel es el mayor entre dificultad y riesgo y decide la ceremonia (aceptación, quién construye, verificación y demo). Sección «Niveles» en el método y en el bloque global, columna «Nivel» y campo «Nivel y porqué» en `HISTORIAS.md`, y el orquestador propone el nivel con su porqué. Sube si la historia crece, nunca baja.
 - Corrige macOS: se aceptan enlaces simbólicos en directorios padres del proyecto (`/tmp` y `/var/folders` cuelgan de `/var`, enlace a `/private/var`). Siguen rechazados el proyecto que es un enlace y los enlaces dentro del proyecto.
 - CI: el workflow instala `setuptools` y `wheel` antes de las pruebas (el runner de Python 3.12 no los trae).
-- La versión en `reinstack.py` y `pyproject.toml` sigue en 1.0.0 hasta publicar: las aceptaciones congeladas la fijan.
 
 ## 1.0.0
 
