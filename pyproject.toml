@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "reinstack"
+version = "1.0.0"
+description = "Installer for the Rein method: one person, an orchestrator and a builder."
+readme = "README.en.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [{ name = "Juani Sarmiento" }]
+dependencies = []
+
+[project.urls]
+Homepage = "https://github.com/JuaniSarmiento/reinstack"
+Repository = "https://github.com/JuaniSarmiento/reinstack"
+
+[project.scripts]
+reinstack = "reinstack:main"
+
+[tool.setuptools]
+py-modules = ["reinstack"]
+packages = ["reinstack_templates", "reinstack_templates.en", "reinstack_templates.estilo"]
+
+[tool.setuptools.package-dir]
+reinstack_templates = "templates"
+
+[tool.setuptools.package-data]
+"reinstack_templates" = ["*.md"]
+"reinstack_templates.en" = ["*.md"]
+"reinstack_templates.estilo" = ["*.md"]
