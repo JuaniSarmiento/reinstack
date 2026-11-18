@@ -2,7 +2,7 @@
 
 # ReinStack
 
-[![CI](https://github.com/JuaniSarmiento/reinstack/actions/workflows/tests.yml/badge.svg)](https://github.com/JuaniSarmiento/reinstack/actions/workflows/tests.yml) [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE) [![Version 1.1.0](https://img.shields.io/badge/version-1.1.0-blue.svg)](CHANGELOG.md)
+[![CI](https://github.com/JuaniSarmiento/reinstack/actions/workflows/tests.yml/badge.svg)](https://github.com/JuaniSarmiento/reinstack/actions/workflows/tests.yml) [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE) [![Version 1.5.0](https://img.shields.io/badge/version-1.5.0-blue.svg)](CHANGELOG.md)
 
 I'm Rein. I hold the reins of your work with AI: we agree on what gets built, we write down how we'll know it's done, I delegate the build and I verify. I exist because it happened to almost everyone: the agent says "done", you trust it, and it wasn't done. With me, "done" means there is evidence and that you decided it.
 
@@ -32,7 +32,9 @@ This is how we work. It is a minimal example project (computing a total with VAT
 >
 > **Rein:** Then I'll make it level S: it is local and reversible, and one test we see fail is enough. If it grows or touches sensitive data, it goes up to M or L. Does that work?
 
-The level is the higher of difficulty and risk, and it decides how much ceremony each story carries: S is small, M is normal (acceptance frozen with a SHA) and L is large or risky (more edge cases, the real environment and adversarial review). I propose it with its why and you confirm it; it can go up, never down midway. What never changes at any level: only you mark it Done.
+The level is the higher of difficulty and risk, and it decides how much ceremony each story carries: S is small, M is normal (acceptance frozen with a SHA) and L is large or risky (more edge cases, the real environment and negative criteria by checklist). I propose it with its why and you confirm it; it can go up, never down midway. What never changes at any level: only you mark it Done.
+
+Every story also carries negative criteria (N01…: what must not happen), frozen together with the C ones: S at least 1, M 2 or 3, L a short checklist.
 
 **2. Criteria with identifiers.** I write them in `STORIES.md`:
 
@@ -122,7 +124,7 @@ What they do better than I do: BMAD has deep planning, with product, architectur
 
 ## Meet Rein
 
-I'm the orchestrator. *Rein* as in the reins: I set the pace, you choose the direction. Calm and direct, firm about the method, honest about "done" and warm without being servile: no flattery, no lectures. I'm the one who talks to you; the builder works behind the scenes and has no character. The tone does not replace the method: if they clash, the rules win. My voice lives in `templates/estilo/rein.en.md`. This is how I sound (illustrative) when you say "go ahead, mark it done" with no evidence:
+I'm the orchestrator. *Rein* as in the reins: I set the pace, you choose the direction. A partner, not a supervisor: close and direct, I greet you by name at the start and when you come back, firm about the method from your side of the table, honest about "done", and I celebrate what goes well with the evidence: no empty flattery, no lectures. I'm the one who talks to you; the builder works behind the scenes and has no character. The tone does not replace the method: if they clash, the rules win. My voice lives in `templates/estilo/rein.en.md`. This is how I sound (illustrative) when you say "go ahead, mark it done" with no evidence:
 
 > **You:** Go ahead, mark it done.
 >
@@ -138,6 +140,7 @@ And when I'm wrong:
 
 ```sh
 reinstack install . --agent both --dry-run
+reinstack install . --context medium --dry-run
 ```
 
 With `--dry-run` it only lists what it would write. Drop it to install; use `--agent claude` or `--agent codex` for a single client. From a clone, `python3 reinstack.py` and `reinstack` are equivalent. Close and reopen the client session so that it discovers the instructions and profiles. Then, in the project:
@@ -152,8 +155,8 @@ Installing profiles does not start agents: the client must offer delegation and 
 |---|---|
 | `.rein/METHOD.md` | Rules of the working circuit |
 | `CLAUDE.md` / `AGENTS.md` | Entry block for the chosen client |
-| `.claude/agents/rein-*.md` | Two profiles for Claude Code |
-| `.codex/agents/rein-*.toml` | Two profiles for Codex |
+| `.claude/agents/rein-*.md` | Three profiles for Claude Code |
+| `.codex/agents/rein-*.toml` | Three profiles for Codex |
 | `.rein/manifest.json` | Local record of the installation's files and hashes |
 | `README.md`, `CONTEXT.md`, `STORIES.md`, `ORCHESTRATOR.md` | Initial documents, only if they do not exist |
 
@@ -162,6 +165,8 @@ Three layers of documentation, without depending on any external tool:
 - `CONTEXT.md`: why the project exists (problem, for whom, domain rules, glossary, stack and decisions with their why). Stable: it changes only when a decision changes.
 - `ORCHESTRATOR.md`: the state (rewritten, not piled up). It can be a link to an external note, for example from Obsidian: `reinstack install . --state <path-to-note>` creates it as a symbolic link to that path (it must exist), without writing to the note. The link does not enter the manifest and `update`, `doctor` and `uninstall` do not follow it. If the project already has an `obsidian.md`, that is the state file.
 - `STORIES.md`: what gets built (backlog, contracts and evidence).
+
+`--context` chooses how much knowledge base is born with the project: `simple` (default, just `CONTEXT.md`), `medium` (`knowledge/` with rules, decisions and lessons), `full` (also problem, scope, model, architecture and glossary) or the path of a base you already have. `CONTEXT.md` holds the index inside a `<!-- rein:base -->` block; everything else is yours. The base files are seeded if missing and never overwritten, and `uninstall` does not delete them. To go up: `reinstack update . --context full`; going down you do by hand. Each story also carries a knowledge close (K01...: which rule, decision or lesson goes in, or "nothing, because..."), and `rein-documentador`, on request, fills the base from the code and Git, proposing file by file and writing nothing you have not confirmed.
 
 The initial documents become the project's. I preserve the foreign text of your instruction files and reject conflicts in managed files. I do not install OpenSpec, MCP, skills, third-party dependencies or permission modes. The full method is in [templates/en/METODO.md](templates/en/METODO.md) (Spanish: [templates/METODO.md](templates/METODO.md)) and the walk-through of a story in the [practical guide](GUIA.en.md).
 
@@ -180,10 +185,10 @@ The first lists the files it would touch without writing; the second installs on
 | Client | File | Content |
 |---|---|---|
 | Claude Code | `~/.claude/CLAUDE.md` | method block between `<!-- rein:global -->` and `<!-- /rein:global -->` |
-| Claude Code | `~/.claude/agents/rein-orchestrator.md`, `rein-constructor.md` | the two profiles |
+| Claude Code | `~/.claude/agents/rein-orchestrator.md`, `rein-constructor.md`, `rein-documentador.md` | the three profiles |
 | Claude Code | `~/.claude/output-styles/rein.md` and `"outputStyle": "Rein"` in `~/.claude/settings.json` | the tone (only without `--no-tone`); the rest of `settings.json` is preserved |
 | Codex | `~/.codex/AGENTS.md` | the same block and, without `--no-tone`, the tone between `<!-- rein:tono -->` and `<!-- /rein:tono -->` |
-| Codex | `~/.codex/agents/rein-orchestrator.toml`, `rein-constructor.toml` | the two profiles |
+| Codex | `~/.codex/agents/rein-orchestrator.toml`, `rein-constructor.toml`, `rein-documentador.toml` | the three profiles |
 | Rein | `~/.rein/global.json` | what `--remove` needs |
 
 - **Foreign content untouched**: it only writes inside the marks; a profile or style with the same name that ReinStack did not install is rejected.
@@ -196,7 +201,7 @@ My tone in Codex, which has no output styles: `reinstack tone --lang en` prints 
 
 ## Language
 
-Everything exists in Spanish and English: templates, `install`, `update`, `global`, messages and help. In an English installation the files are `CONTEXT.md`, `ORCHESTRATOR.md`, `STORIES.md`, `.rein/METHOD.md`; in Spanish, `CONTEXTO.md`, `ORQUESTADOR.md`, `HISTORIAS.md`, `.rein/METODO.md`. `README.md` and the profiles `rein-orchestrator` and `rein-constructor` keep their names. Options have a name in both languages (`tone`/`tono`, `--state`/`--estado`, `--no-tone`/`--sin-tono`, `--remove`/`--quitar`) and both always work.
+Everything exists in Spanish and English: templates, `install`, `update`, `global`, messages and help. In an English installation the files are `CONTEXT.md`, `ORCHESTRATOR.md`, `STORIES.md`, `.rein/METHOD.md`; in Spanish, `CONTEXTO.md`, `ORQUESTADOR.md`, `HISTORIAS.md`, `.rein/METODO.md`. `README.md` and the profiles `rein-orchestrator`, `rein-constructor` and `rein-documentador` keep their names. Options have a name in both languages (`tone`/`tono`, `--state`/`--estado`, `--no-tone`/`--sin-tono`, `--remove`/`--quitar`) and both always work.
 
 - `install` and `global` accept `--lang es|en`. Without it the locale is used (`LC_ALL`, else `LC_MESSAGES`, else `LANG`): if it starts with `es` it is Spanish; otherwise, English.
 - `update` keeps the language saved in `.rein/manifest.json`. An installation from 0.3.0 or earlier is Spanish.

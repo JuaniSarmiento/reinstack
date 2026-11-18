@@ -15,7 +15,7 @@ import re
 import sys
 import tempfile
 
-VERSION = "1.1.0"
+VERSION = "1.5.0"
 MANIFEST = ".rein/manifest.json"
 PENDING = ".rein/manifest.pending.json"
 START = "<!-- REINSTACK BEGIN -->"
@@ -55,10 +55,12 @@ ROLES = {
     "es": {
         "orchestrator": "Acuerda historias con la persona, delega y verifica evidencia independiente.",
         "constructor": "Implementa una historia acotada sin modificar su aceptación aprobada.",
+        "documentador": "A pedido, propone la base de conocimiento desde el código y Git, sin tocar código ni pruebas.",
     },
     "en": {
         "orchestrator": "Agrees on stories with the person, delegates and verifies independent evidence.",
         "constructor": "Implements one bounded story without modifying its approved acceptance.",
+        "documentador": "On request, proposes the knowledge base from code and Git, without touching code or tests.",
     },
 }
 ROLE_NAMES = tuple(ROLES["es"])
@@ -77,6 +79,8 @@ SEEDS = {
             "## Plantilla de historia\n"
             "- Resultado para la persona:\n- Alcance y exclusiones:\n"
             "- Criterios de aceptación (identificadores y ejemplos):\n"
+            "- Criterios negativos (N01…: lo que no tiene que pasar):\n"
+            "- Cierre de la base (K01…: qué entra a la base de conocimiento):\n"
             "- Nivel y porqué (S, M o L: el mayor entre dificultad y riesgo):\n"
             "- Dificultad y riesgos:\n- Brief y archivos relevantes:\n"
             "- Aceptación aprobada: SHA, comando y casos esperados:\n"
@@ -110,6 +114,8 @@ SEEDS = {
             "## Story template\n"
             "- Result for the person:\n- Scope and exclusions:\n"
             "- Acceptance criteria (identifiers and examples):\n"
+            "- Negative criteria (N01…: what must not happen):\n"
+            "- Knowledge close (K01…: what goes into the knowledge base):\n"
             "- Level and why (S, M or L: the higher of difficulty and risk):\n"
             "- Difficulty and risks:\n- Brief and relevant files:\n"
             "- Approved acceptance: SHA, command and expected cases:\n"
@@ -133,6 +139,39 @@ SEEDS = {
             "## Open stories\nOne line per story that is not Done: status, what is missing, blocker, next step.\n\n"
             "## Current decisions\n\n## Next step\n"
         ),
+    },
+}
+
+
+# Knowledge base (--contexto): files seeded for the modes media and completa. They belong to the person.
+BASE_INI, BASE_FIN = "<!-- rein:base -->", "<!-- /rein:base -->"
+MODE_NAMES = {"simple": "simple", "media": "media", "medium": "media", "completa": "completa", "full": "completa"}
+MODE_RANK = {"simple": 0, "media": 1, "completa": 2}
+MODE_LABEL = {"es": {"simple": "simple", "media": "media", "completa": "completa", "ruta": "ruta"},
+              "en": {"simple": "simple", "media": "medium", "completa": "full", "ruta": "path"}}
+KB_DIR = {"es": "conocimiento", "en": "knowledge"}
+KB_TITLE = {"es": "Base de conocimiento", "en": "Knowledge base"}
+# Ordered: the first three are the mode media; all eight, the mode completa.
+KB_FILES = {
+    "es": {
+        "reglas.md": "# Reglas\n\nLas reglas del dominio que el código no puede violar, cada una con su identificador.\n\nR01 Primera regla, en una frase.\n",
+        "decisiones.md": "# Decisiones\n\nCada decisión con su porqué y la fecha.\n\nD-001 Decisión. Porqué: la razón.\n",
+        "lecciones.md": "# Lecciones\n\nLo que aprendimos y no queremos repetir, con su causa.\n\nL-001 Lección. Causa: qué pasó.\n",
+        "problema.md": "# Problema\n\nQué duele hoy y a quién, en pocas líneas.\n",
+        "alcance.md": "# Alcance\n\nQué incluye el proyecto y qué queda afuera.\n",
+        "modelo.md": "# Modelo\n\nLas entidades del dominio y cómo se relacionan.\n",
+        "arquitectura.md": "# Arquitectura\n\nLas piezas del sistema y cómo se comunican.\n",
+        "glosario.md": "# Glosario\n\nTérminos del dominio con su significado en este proyecto.\n",
+    },
+    "en": {
+        "rules.md": "# Rules\n\nThe domain rules the code cannot break, each with its identifier.\n\nR01 First rule, in one sentence.\n",
+        "decisions.md": "# Decisions\n\nEach decision with its why and the date.\n\nD-001 Decision. Why: the reason.\n",
+        "lessons.md": "# Lessons\n\nWhat we learned and do not want to repeat, with its cause.\n\nL-001 Lesson. Cause: what happened.\n",
+        "problem.md": "# Problem\n\nWhat hurts today and for whom, in a few lines.\n",
+        "scope.md": "# Scope\n\nWhat the project includes and what stays out.\n",
+        "model.md": "# Model\n\nThe domain entities and how they relate.\n",
+        "architecture.md": "# Architecture\n\nThe pieces of the system and how they talk to each other.\n",
+        "glossary.md": "# Glossary\n\nDomain terms with their meaning in this project.\n",
     },
 }
 
@@ -217,6 +256,12 @@ MESSAGES = {
         "h_global_dry": "Listar los archivos que tocaría sin escribir",
         "h_quitar": "Retirar lo que instaló y devolver el outputStyle anterior",
         "h_lang": "Idioma de los textos instalados (por defecto, el de la locale)",
+        "h_contexto": "Base de conocimiento: simple, media, completa o una ruta existente (por defecto, simple)",
+        "ctx_invalid": "El valor de {opt} no es un modo (simple, media, completa) ni una ruta existente: {value}",
+        "ctx_change": ("No se puede pasar de {actual} a {pedido}: la base sólo sube (simple, media, completa) "
+                       "y una ruta sólo se elige desde simple. Bajar de modo se hace a mano. No se modificó nada."),
+        "ctx_use_update": "Ya hay una instalación con otra base ({actual}); para cambiarla usá `reinstack update {opt}`.",
+        "mf_context": "base de conocimiento inválida",
     },
     "en": {
         "symlink_path": "Path contains a symbolic link: {path}",
@@ -295,6 +340,12 @@ MESSAGES = {
         "h_global_dry": "List the files it would touch without writing",
         "h_quitar": "Remove what it installed and restore the previous outputStyle",
         "h_lang": "Language of the installed texts (default: the locale's)",
+        "h_contexto": "Knowledge base: simple, medium, full or an existing path (default: simple)",
+        "ctx_invalid": "The value of {opt} is neither a mode (simple, medium, full) nor an existing path: {value}",
+        "ctx_change": ("Cannot go from {actual} to {pedido}: the base only goes up (simple, medium, full) "
+                       "and a path can only be chosen from simple. Going down is done by hand. Nothing was modified."),
+        "ctx_use_update": "There is already an installation with another base ({actual}); to change it use `reinstack update {opt}`.",
+        "mf_context": "invalid knowledge base",
     },
 }
 
@@ -439,7 +490,8 @@ def load_manifest(root: Path, relative: str = MANIFEST) -> dict | None:
     try:
         data = json.loads(path.read_text(encoding="utf-8"))
         base = {"schema", "version", "agent", "files", "bridges"}
-        if not isinstance(data, dict) or set(data) not in (base, base | {"lang"}):
+        optional = {"lang", "context", "context_path"}
+        if not isinstance(data, dict) or not base <= set(data) <= base | optional:
             raise ValueError(t("mf_fields"))
         if data["schema"] != 1:
             raise ValueError(t("mf_schema"))
@@ -447,11 +499,20 @@ def load_manifest(root: Path, relative: str = MANIFEST) -> dict | None:
         data.setdefault("lang", "es")
         if data["lang"] not in LANGS:
             raise ValueError(t("mf_lang"))
+        # A manifest without "context" (1.2.0 or earlier) has the simple mode.
+        if data.get("context", "media") not in ("media", "completa", "ruta"):
+            raise ValueError(t("mf_context"))
+        if ("context_path" in data) != (data.get("context") == "ruta") or (
+                "context_path" in data and (not isinstance(data["context_path"], str) or not data["context_path"])):
+            raise ValueError(t("mf_context"))
         version_key(data["version"])
         agent = data["agent"]
         if agent not in ("claude", "codex", "both"):
             raise ValueError(t("mf_client"))
-        if not isinstance(data["files"], dict) or set(data["files"]) != file_names(agent, data["lang"]):
+        # Older manifests (1.3.0 or earlier) lack the documenter profile: any valid subset is accepted.
+        allowed = file_names(agent, data["lang"])
+        required = {name for name in allowed if "rein-documentador." not in name}
+        if not isinstance(data["files"], dict) or not required <= set(data["files"]) <= allowed:
             raise ValueError(t("mf_files"))
         for value in data["files"].values():
             if not isinstance(value, str) or not re.fullmatch(r"[0-9a-f]{64}", value):
@@ -516,13 +577,93 @@ def manifest_bytes(data: dict) -> bytes:
     return (json.dumps(data, ensure_ascii=False, indent=2, sort_keys=True) + "\n").encode("utf-8")
 
 
-def current_manifest(data: dict, files: dict[str, bytes]) -> dict:
+def manifest_context(data: dict) -> tuple[str, str | None]:
+    return data.get("context", "simple"), data.get("context_path")
+
+
+def current_manifest(data: dict, files: dict[str, bytes], context: tuple[str, str | None] | None = None) -> dict:
     """The manifest this version would record for an intact install described by data."""
     lang = data.get("lang", "es")
-    return {"schema": 1, "version": VERSION, "agent": data["agent"], "lang": lang,
-            "files": {name: digest(content) for name, content in files.items()},
-            "bridges": {name: {"segment": current_segment(entry["segment"], lang), "created": entry["created"]}
-                        for name, entry in data["bridges"].items()}}
+    mode, path = context or manifest_context(data)
+    result = {"schema": 1, "version": VERSION, "agent": data["agent"], "lang": lang,
+              "files": {name: digest(content) for name, content in files.items()},
+              "bridges": {name: {"segment": current_segment(entry["segment"], lang), "created": entry["created"]}
+                          for name, entry in data["bridges"].items()}}
+    if mode != "simple":
+        result["context"] = mode
+        if path is not None:
+            result["context_path"] = path
+    return result
+
+
+def resolve_context(root: Path, value: str | None) -> tuple[str, str | None] | None:
+    """Preflight of --contexto: a mode (both languages) or an existing path, relative to the project or absolute."""
+    if value is None:
+        return None
+    key = value.strip().lower()
+    if key in MODE_NAMES:
+        return MODE_NAMES[key], None
+    candidate = Path(os.path.abspath(root / os.path.expanduser(value)))  # an absolute value wins over root
+    if not key or not candidate.exists():
+        raise ReinError(t("ctx_invalid", opt=OPTION_ALIASES["contexto"][0 if UI == "es" else 1], value=value))
+    try:
+        return "ruta", candidate.relative_to(root).as_posix()
+    except ValueError:
+        return "ruta", str(candidate)
+
+
+def check_context_change(current: tuple[str, str | None], wanted: tuple[str, str | None]) -> None:
+    """Going up is fine; staying is fine; going down or switching to or from a path is not."""
+    if wanted == current:
+        return
+    if (current[0] == "simple" and wanted[0] != "simple") or (
+            current[0] in MODE_RANK and wanted[0] in MODE_RANK and MODE_RANK[wanted[0]] > MODE_RANK[current[0]]):
+        return
+    labels = MODE_LABEL[UI]
+    raise ReinError(t("ctx_change", actual=labels[current[0]], pedido=labels[wanted[0]]))
+
+
+def base_block(lang: str, mode: str, path: str | None) -> str:
+    if mode == "ruta":
+        destination = f"<{path}>" if re.search(r"[\s()]", path) else path
+        items = [f"- [{path}]({destination})"]
+    else:
+        folder = KB_DIR[lang]
+        names = list(KB_FILES[lang])[: 3 if mode == "media" else 8]
+        items = [f"- [{name}]({folder}/{name})" for name in names]
+    return f"{BASE_INI}\n## {KB_TITLE[lang]}\n\n" + "\n".join(items) + f"\n{BASE_FIN}"
+
+
+def plan_base(root: Path, lang: str, context: tuple[str, str | None], refresh: bool, writes: dict[str, bytes]) -> None:
+    """Seed the missing files of the base (never overwrite) and keep its index inside the rein:base block.
+
+    Only the block is ever written in CONTEXTO.md; broken marks are an error before anything is written.
+    """
+    mode, path = context
+    if mode == "simple":
+        return
+    if mode != "ruta":
+        for name in list(KB_FILES[lang])[: 3 if mode == "media" else 8]:
+            relative = f"{KB_DIR[lang]}/{name}"
+            if not target(root, relative).exists():
+                writes[relative] = KB_FILES[lang][name].encode("utf-8")
+    name = NAMES[lang]["context"]
+    file = target(root, name)
+    if name in writes:
+        text = writes[name].decode("utf-8")
+    else:
+        text = file.read_bytes().decode("utf-8") if file.exists() else ""
+    span = block_span(text, BASE_INI, BASE_FIN, name)
+    if span is not None and not refresh:
+        return
+    block = base_block(lang, mode, path)
+    if span is not None:
+        new = text[: span[0]] + block + text[span[1]:]
+    else:
+        separator = "" if not text else ("\n" if text.endswith("\n") else "\n\n")
+        new = text + separator + block + "\n"
+    if new != text or name in writes:
+        writes[name] = new.encode("utf-8")
 
 
 def interrupted_message() -> str:
@@ -547,8 +688,10 @@ def resolve_estado(root: Path, estado: str | None, lang: str = "es") -> Path | N
     return note
 
 
-def install(root: Path, agent: str, dry_run: bool, estado: str | None = None, lang: str | None = None) -> None:
+def install(root: Path, agent: str, dry_run: bool, estado: str | None = None, lang: str | None = None,
+            contexto: str | None = None) -> None:
     link = resolve_estado(root, estado, lang or detect_lang())
+    wanted = resolve_context(root, contexto)
     current = load_manifest(root)
     if current is not None:
         if estado is not None:
@@ -560,6 +703,9 @@ def install(root: Path, agent: str, dry_run: bool, estado: str | None = None, la
             raise ReinError(t("other_agent"))
         if lang is not None and lang != current["lang"]:
             raise ReinError(t("other_lang"))
+        if wanted is not None and wanted != manifest_context(current):
+            raise ReinError(t("ctx_use_update", actual=MODE_LABEL[UI][manifest_context(current)[0]],
+                              opt=OPTION_ALIASES["contexto"][0 if UI == "es" else 1]))
         if newer_than_current(current["version"]):
             raise ReinError(newer_message(current["version"]))
         if current != current_manifest(current, render(agent, current["lang"])):
@@ -570,8 +716,13 @@ def install(root: Path, agent: str, dry_run: bool, estado: str | None = None, la
     lang = lang or detect_lang()
     files = render(agent, lang)
     writes = dict(files)
+    context = wanted or ("simple", None)
     data = {"schema": 1, "version": VERSION, "agent": agent, "lang": lang,
             "files": {name: digest(content) for name, content in files.items()}, "bridges": {}}
+    if context[0] != "simple":
+        data["context"] = context[0]
+        if context[1] is not None:
+            data["context_path"] = context[1]
     # Complete preflight: no writes until every target and collision is checked.
     for name in files:
         if target(root, name).exists():
@@ -597,6 +748,7 @@ def install(root: Path, agent: str, dry_run: bool, estado: str | None = None, la
             writes[name] = seed.encode("utf-8")
     if link is not None:
         target(root, NAMES[lang]["orch"])
+    plan_base(root, lang, context, True, writes)
     writes[MANIFEST] = manifest_bytes(data)
     for name in writes:
         target(root, name)
@@ -625,11 +777,17 @@ def observed_manifest(root: Path, data: dict, pending: dict) -> dict:
     return observed
 
 
-def update(root: Path, dry_run: bool) -> None:
+def update(root: Path, dry_run: bool, contexto: str | None = None) -> None:
+    wanted = resolve_context(root, contexto)
     data = load_manifest(root)
     if data is None:
         raise ReinError(t("no_install"))
     pending = load_pending(root, data)
+    recorded_context = manifest_context(data)
+    if wanted is not None:
+        check_context_change(recorded_context, wanted)
+    # Without the option the recorded base is kept; an interrupted update that already chose one is completed.
+    context = wanted or (manifest_context(pending) if pending is not None else recorded_context)
     for state in (data, pending):
         if state is not None and newer_than_current(state["version"]):
             raise ReinError(newer_message(state["version"]))
@@ -637,7 +795,7 @@ def update(root: Path, dry_run: bool) -> None:
     # update is pending, each file may hold its old or its pending content, and nothing else.
     verify(root, data, pending)
     files = render(data["agent"], data["lang"])
-    new = current_manifest(data, files)
+    new = current_manifest(data, files, context)
     retarget = pending is not None and pending != new
     recorded = data
     if retarget:
@@ -645,7 +803,16 @@ def update(root: Path, dry_run: bool) -> None:
     writes = {}
     # Complete preflight: every target is validated and every new content computed first.
     for name, content in files.items():
-        if target(root, name).read_bytes() != content:
+        path = target(root, name)
+        if name not in data["files"]:
+            # Added by this version: absent is fine; present is foreign unless an interrupted update wrote it.
+            if path.exists():
+                mine = pending is not None and pending["files"].get(name) == digest(path.read_bytes())
+                if not mine:
+                    raise ReinError(t("foreign", name=name))
+                continue
+            writes[name] = content
+        elif path.read_bytes() != content:
             writes[name] = content
     for name, entry in data["bridges"].items():
         old = entry["segment"].encode("utf-8")
@@ -654,10 +821,11 @@ def update(root: Path, dry_run: bool) -> None:
         if segment != old and content.count(old) == 1:
             writes[name] = content.replace(old, segment, 1)
     # El contexto es un documento del proyecto: se siembra si falta y nunca se pisa.
-    context = NAMES[data["lang"]]["context"]
-    if not os.path.lexists(root / context):
-        writes[context] = SEEDS[data["lang"]][context].encode("utf-8")
-    target(root, context)
+    context_name = NAMES[data["lang"]]["context"]
+    if not os.path.lexists(root / context_name):
+        writes[context_name] = SEEDS[data["lang"]][context_name].encode("utf-8")
+    target(root, context_name)
+    plan_base(root, data["lang"], context, context != recorded_context, writes)
     target(root, MANIFEST)
     target(root, PENDING)
     if not writes and new == data and pending is None:
@@ -1006,7 +1174,8 @@ def requested_lang(argv: list[str]) -> str | None:
 
 
 # Alias pairs (Spanish, English): both work in any language; --help shows only the locale's.
-OPTION_ALIASES = {"estado": ("--estado", "--state"), "sin_tono": ("--sin-tono", "--no-tone"), "quitar": ("--quitar", "--remove")}
+OPTION_ALIASES = {"estado": ("--estado", "--state"), "sin_tono": ("--sin-tono", "--no-tone"), "quitar": ("--quitar", "--remove"),
+                 "contexto": ("--contexto", "--context")}
 COMMAND_ALIASES = {"tono": ("tono", "tone")}
 
 
@@ -1034,9 +1203,11 @@ def main(argv: list[str] | None = None) -> int:
     setup.add_argument("--agent", choices=("claude", "codex", "both"), default="both")
     setup.add_argument("--lang", choices=LANGS, default=None, help=t("h_lang"))
     option(setup, "estado", default=None, metavar="ESTADO" if UI == "es" else "STATE", help=t("h_estado", orch=NAMES[UI]["orch"]))
+    option(setup, "contexto", default=None, metavar="MODO" if UI == "es" else "MODE", help=t("h_contexto"))
     setup.add_argument("--dry-run", action="store_true", help=t("h_dry"))
     upgrade = commands.add_parser("update", help=t("h_update"))
     upgrade.add_argument("path", help=t("h_update_path"))
+    option(upgrade, "contexto", default=None, metavar="MODO" if UI == "es" else "MODE", help=t("h_contexto"))
     upgrade.add_argument("--dry-run", action="store_true", help=t("h_dry"))
     for command in ("doctor", "uninstall"):
         subparser = commands.add_parser(command)
@@ -1061,9 +1232,9 @@ def main(argv: list[str] | None = None) -> int:
             return 0
         root = checked_root(args.path)
         if args.command == "install":
-            install(root, args.agent, args.dry_run, args.estado, args.lang)
+            install(root, args.agent, args.dry_run, args.estado, args.lang, args.contexto)
         elif args.command == "update":
-            update(root, args.dry_run)
+            update(root, args.dry_run, args.contexto)
         elif args.command == "doctor":
             doctor(root)
         else:

@@ -12,12 +12,12 @@ Al empezar, leelos antes de proponer nada. Pueden estar atrasados: si no coincid
 
 ## Roles
 
-El agente principal es el **orquestador**: habla con la persona, acuerda el alcance, prepara el brief, delega y verifica. El **constructor** (`rein-constructor`) implementa una historia acotada. Si no hay subagentes disponibles, decilo antes de asumir el trabajo del constructor; no finjas una delegación. Un constructor por historia, con el contexto justo; el modelo lo elige la persona, y cambiarlo pide su OK y queda registrado. Un cambio chico y local puede hacerlo el orquestador directamente si la persona lo pide.
+El agente principal es el **orquestador**: habla con la persona, acuerda el alcance, prepara el brief, delega y verifica. El **constructor** (`rein-constructor`) implementa una historia acotada. El **documentador** (`rein-documentador`) llena la base desde el código, sólo a pedido. Si no hay subagentes disponibles, decilo antes de asumir el trabajo del constructor; no finjas una delegación. Un constructor por historia, con el contexto justo; el modelo lo elige la persona, y cambiarlo pide su OK y queda registrado. Un cambio chico y local puede hacerlo el orquestador directamente si la persona lo pide.
 
 ## Una historia
 
 1. **Conversar antes de programar**: objetivo observable, qué incluye y qué no, dificultad y riesgo (son distintos: un cambio chico puede tocar datos sensibles).
-2. **Criterios de aceptación con identificadores** (C01, C02…) y guion de demo, escritos antes de construir.
+2. **Criterios de aceptación con identificadores** (C01, C02…) y guion de demo, escritos antes de construir. Sumá criterios negativos (N01, N02…: lo que no tiene que pasar; S al menos 1, M 2 o 3, L una lista corta) y preguntate «¿qué implementación mala pasaría esto?». Sumá cierres de la base (K01…: qué regla, decisión o lección entra a la base, o «nada, porque…»).
 3. **Aceptación ejecutable antes de implementar**: el orquestador escribe las pruebas que deciden la aceptación, la persona las aprueba, se commitean y se anota el SHA. El constructor no las modifica. Un criterio de interfaz se prueba en navegador real.
 4. **Construir** con el menor cambio razonable y comprobaciones focalizadas. TDD según riesgo; una prueba sólo cuenta si se la vio fallar por aserción, no por error de setup. Si el sistema ya está en uso, se construye aparte y se activa en un solo paso al final.
 5. **Verificar** recuperando la aceptación del SHA aprobado (git show o worktree), no la copia del constructor. Comparar casos esperados con ejecutados: faltantes o skips no son éxito.
@@ -27,7 +27,7 @@ Estados: **Pendiente → En proceso → Lista → Terminada**. Lista no es acept
 
 ## Niveles
 
-Cada historia tiene un nivel: el mayor entre su dificultad y su riesgo. **S** (chica: local, reversible): una prueba vista fallar en el mismo commit, y un reporte con evidencia. **M** (normal): aceptación congelada con SHA antes de construir, verificación desde el SHA, demo corta. **L** (grande o riesgosa): además casos de borde y de fallo, entorno real, revisión adversarial y demo criterio por criterio. Proponé el nivel con su porqué y que la persona lo confirme; si la historia crece sube, nunca baja. Detalle en `.rein/METODO.md`.
+Cada historia tiene un nivel: el mayor entre su dificultad y su riesgo. **S** (chica: local, reversible): una prueba vista fallar en el mismo commit, y un reporte con evidencia. **M** (normal): aceptación congelada con SHA antes de construir, verificación desde el SHA, demo corta. **L** (grande o riesgosa): además casos de borde y de fallo, entorno real, criterios negativos por lista y demo criterio por criterio. Proponé el nivel con su porqué y que la persona lo confirme; si la historia crece sube, nunca baja. Detalle en `.rein/METODO.md`.
 
 ## Cerrar antes de abrir
 

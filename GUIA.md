@@ -32,6 +32,8 @@ Demo: marcar, nombrar, guardar, recargar y probar nombre vacío.
 
 El nivel (S, M o L) es el mayor entre dificultad y riesgo y decide la ceremonia: el orquestador lo propone con su porqué y la persona lo confirma. Si la historia crece, sube; nunca baja.
 
+La historia lleva también criterios negativos (N01…: lo que no tiene que pasar), que se congelan junto con los C.
+
 Una historia inicial también incluye cómo arrancar el proyecto y cómo ejecutar su verificación. Las capas se construyen juntas en función del comportamiento; no son tres historias separadas.
 
 ## Preparar el contrato
@@ -44,7 +46,7 @@ La aprobación del alcance no sustituye la aprobación de un contrato que todav�
 
 El constructor recibe la historia lista, rutas a contexto vigente, contrato y límites. Lee el código necesario, implementa, escribe pruebas de apoyo y verifica el cambio de forma focalizada. Si el problema exige cambiar el alcance o el contrato, lo devuelve al orquestador para decidirlo con la persona.
 
-El constructor entrega evidencia, no un “listo” sin sustento. No ejecuta la suite completa ni determina que su propia historia quedó aceptada.
+El constructor entrega evidencia, no un “listo” sin sustento. No ejecuta la suite completa ni determina que su propia historia quedó aceptada. También cumple el cierre de la base (K01…) actualizando el archivo nombrado; y, si el proyecto ya existe y la base está vacía, `rein-documentador` la propone desde el código y Git, sólo a pedido y sin escribir nada que la persona no confirme.
 
 ## Verificar y demostrar
 
@@ -73,10 +75,10 @@ Usa el HOME del entorno. Qué escribe:
 | Cliente | Archivo | Contenido |
 |---|---|---|
 | Claude Code | `~/.claude/CLAUDE.md` | bloque del método entre `<!-- rein:global -->` y `<!-- /rein:global -->` |
-| Claude Code | `~/.claude/agents/rein-orchestrator.md`, `rein-constructor.md` | los dos perfiles |
+| Claude Code | `~/.claude/agents/rein-orchestrator.md`, `rein-constructor.md`, `rein-documentador.md` | los tres perfiles |
 | Claude Code | `~/.claude/output-styles/rein.md` y `"outputStyle": "Rein"` en `~/.claude/settings.json` | el tono (sólo sin `--sin-tono`); el resto de `settings.json` se conserva |
 | Codex | `~/.codex/AGENTS.md` | el mismo bloque del método y, sin `--sin-tono`, el tono entre `<!-- rein:tono -->` y `<!-- /rein:tono -->` |
-| Codex | `~/.codex/agents/rein-orchestrator.toml`, `rein-constructor.toml` | los dos perfiles |
+| Codex | `~/.codex/agents/rein-orchestrator.toml`, `rein-constructor.toml`, `rein-documentador.toml` | los tres perfiles |
 | Rein | `~/.rein/global.json` | lo necesario para `--quitar` (outputStyle anterior, hashes de lo instalado) |
 
 - **Sin pisar lo ajeno**: sólo se escribe dentro de las marcas. Si no hay bloque, se agrega al principio del archivo; si el archivo no existe, se crea. Un perfil o estilo con el mismo nombre que no instaló ReinStack se rechaza.
@@ -89,7 +91,7 @@ Cerrá y reabrí el cliente para que cargue lo nuevo.
 
 ## Idioma
 
-`install` y `global` aceptan `--lang es|en`; sin él se usa la locale (`es...` da español, cualquier otra da inglés). `update` conserva el idioma instalado y una instalación 0.3.0 cuenta como español. En una instalación en inglés los archivos se llaman `CONTEXT.md`, `ORCHESTRATOR.md`, `STORIES.md` y `.rein/METHOD.md`, y las opciones tienen alias en inglés (`tone`, `--state`, `--no-tone`, `--remove`); los dos nombres funcionan siempre. Ver el README, sección Idioma.
+`install` y `update` aceptan `--contexto simple|media|completa|<ruta>` para sembrar una base de conocimiento (`conocimiento/`) enlazada desde CONTEXTO.md; se puede subir de modo con `update --contexto`, pero bajar lo hace la persona a mano. `install` y `global` aceptan `--lang es|en`; sin él se usa la locale (`es...` da español, cualquier otra da inglés). `update` conserva el idioma instalado y una instalación 0.3.0 cuenta como español. En una instalación en inglés los archivos se llaman `CONTEXT.md`, `ORCHESTRATOR.md`, `STORIES.md` y `.rein/METHOD.md`, y las opciones tienen alias en inglés (`tone`, `--state`, `--no-tone`, `--remove`); los dos nombres funcionan siempre. Ver el README, sección Idioma.
 
 ## Retomar otro día
 

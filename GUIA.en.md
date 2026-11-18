@@ -32,6 +32,8 @@ Demo: mark, name, save, reload and try an empty name.
 
 The level (S, M or L) is the higher of difficulty and risk and decides the ceremony: the orchestrator proposes it with its why and the person confirms it. If the story grows, it goes up; it never goes down.
 
+The story also carries negative criteria (N01…: what must not happen), frozen together with the C ones.
+
 An initial story also includes how to start the project and how to run its verification. The layers are built together around the behavior; they are not three separate stories.
 
 ## Preparing the contract
@@ -44,7 +46,7 @@ Approving the scope does not replace approving a contract that does not exist ye
 
 The builder receives the ready story, paths to the current context, the contract and the limits. It reads the necessary code, implements, writes supporting tests and verifies the change in a focused way. If the problem requires changing the scope or the contract, it hands it back to the orchestrator to decide with the person.
 
-The builder delivers evidence, not an unsupported "done". It does not run the full suite and does not decide that its own story was accepted.
+The builder delivers evidence, not an unsupported "done". It does not run the full suite and does not decide that its own story was accepted. It also meets the knowledge close (K01...) by updating the named file; and, if the project already exists and the base is empty, `rein-documentador` proposes it from the code and Git, only on request and writing nothing the person has not confirmed.
 
 ## Verify and demonstrate
 
@@ -73,10 +75,10 @@ It uses the environment's HOME. What it writes:
 | Client | File | Content |
 |---|---|---|
 | Claude Code | `~/.claude/CLAUDE.md` | method block between `<!-- rein:global -->` and `<!-- /rein:global -->` |
-| Claude Code | `~/.claude/agents/rein-orchestrator.md`, `rein-constructor.md` | the two profiles |
+| Claude Code | `~/.claude/agents/rein-orchestrator.md`, `rein-constructor.md`, `rein-documentador.md` | the three profiles |
 | Claude Code | `~/.claude/output-styles/rein.md` and `"outputStyle": "Rein"` in `~/.claude/settings.json` | the tone (only without `--no-tone`); the rest of `settings.json` is preserved |
 | Codex | `~/.codex/AGENTS.md` | the same method block and, without `--no-tone`, the tone between `<!-- rein:tono -->` and `<!-- /rein:tono -->` |
-| Codex | `~/.codex/agents/rein-orchestrator.toml`, `rein-constructor.toml` | the two profiles |
+| Codex | `~/.codex/agents/rein-orchestrator.toml`, `rein-constructor.toml`, `rein-documentador.toml` | the three profiles |
 | Rein | `~/.rein/global.json` | what `--remove` needs (previous outputStyle, hashes of what was installed) |
 
 - **Foreign content untouched**: it only writes inside the marks. If there is no block, it is added at the top of the file; if the file does not exist, it is created. A profile or style with the same name that ReinStack did not install is rejected.
@@ -89,7 +91,7 @@ Close and reopen the client so that it loads the new files.
 
 ## Language
 
-`install` and `global` accept `--lang es|en`; without it the locale is used (`es...` gives Spanish, anything else gives English). `update` keeps the installed language and a 0.3.0 installation counts as Spanish. In an English installation the files are called `CONTEXT.md`, `ORCHESTRATOR.md`, `STORIES.md` and `.rein/METHOD.md`, and the options have English aliases (`tone`, `--state`, `--no-tone`, `--remove`); both names always work. See the README, Language section.
+`install` and `update` accept `--context simple|medium|full|<path>` to seed a knowledge base (`knowledge/`) linked from CONTEXT.md; you can go up with `update --context`, but going down is done by hand by the person. `install` and `global` accept `--lang es|en`; without it the locale is used (`es...` gives Spanish, anything else gives English). `update` keeps the installed language and a 0.3.0 installation counts as Spanish. In an English installation the files are called `CONTEXT.md`, `ORCHESTRATOR.md`, `STORIES.md` and `.rein/METHOD.md`, and the options have English aliases (`tone`, `--state`, `--no-tone`, `--remove`); both names always work. See the README, Language section.
 
 ## Picking it up another day
 

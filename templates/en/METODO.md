@@ -24,11 +24,11 @@ One builder per story, with a brief limited to the context it needs. Which model
 
 ## Story brief
 
-Inside STORIES.md, record: identifier, status, observable goal, scope and exclusions, acceptance criteria with identifiers, level and why, difficulty, risks, dependencies and demo script. Add technical decisions only when they help execution. Difficulty and risk are different: a small change can affect sensitive data.
+Inside STORIES.md, record: identifier, status, observable goal, scope and exclusions, acceptance criteria with identifiers, negative criteria (N01…), knowledge close (K01…), level and why, difficulty, risks, dependencies and demo script. Add technical decisions only when they help execution. Difficulty and risk are different: a small change can affect sensitive data.
 
 The level (S, M or L) decides how much ceremony the story carries: see Levels.
 
-An adversarial review can be a session independent of the orchestrator; it does not require a third installed profile. Switching models may help, but it guarantees neither independence nor correctness. Set a budget and a stopping condition for investigations; an investigation can be closed with a negative result, without presenting a feature that does not exist.
+The search for the error goes in the negative criteria, not in per-story reviewers. Set a budget and a stopping condition for investigations; an investigation can be closed with a negative result, without presenting a feature that does not exist.
 
 ## Levels
 
@@ -37,14 +37,32 @@ A story's level is the higher of its difficulty (how much work and uncertainty i
 | | S · small | M · normal | L · large or risky |
 |---|---|---|---|
 | When | Local, reversible, no sensitive data and no system in use | New logic, several pieces, or touches something in use with a backup | High uncertainty, sensitive data, something irreversible, publishing or touching someone else's configuration |
-| Acceptance | One test seen to fail, in the same commit | Frozen with a SHA before building | Frozen, plus edge and failure cases |
+| Acceptance | One test seen to fail, in the same commit; at least 1 negative criterion | Frozen with a SHA before building; 2 or 3 negative criteria | Frozen, plus edge and failure cases; negative criteria by checklist |
 | Built by | The orchestrator directly or the builder | The builder | The builder, with prior research if there is uncertainty |
-| Verification | Run the test and show the output | From the SHA, in a separate environment | From the SHA, plus the real environment (CI, dry-run on the person's machine) and independent adversarial review |
+| Verification | Run the test and show the output | From the SHA, in a separate environment | From the SHA, plus the real environment (CI, dry-run on the person's machine) and negative criteria by checklist |
 | Demo | A report with evidence; can be accepted in a batch | Short | Criterion by criterion |
 
 Unchanged at every level: only the person marks Done; a test counts only if it was seen to fail by assertion, not by a setup error; everything goes on the board (the project's story register).
 
 The orchestrator proposes the level with its why and the person confirms. If the story grows, it goes up a level and is noted on the story; it never goes down midway.
+
+## Negative criteria
+
+Besides the C01… criteria, every story carries negative criteria with identifiers N01…: what must not happen. They look for the error from the contract, without adding reviewers or agents. They cover an invalid input, something that must be refused, data that is not touched, running twice, or an edge case.
+
+When writing each one, the orchestrator asks: "which bad implementation would pass this?". If a sloppy implementation passes anyway, the criterion is useless and gets rewritten.
+
+The amount scales with the level: at S, at least 1; at M, 2 or 3; at L, a short list is walked through: invalid inputs, permissions, sensitive data, idempotency and undo.
+
+They are written and frozen together with the C criteria, before building, and are seen to fail just like them (on an assertion, not on a setup error). The builder must meet them too and does not modify them.
+
+## Knowledge close
+
+Besides the C and N criteria, every story carries closing criteria K01…: what goes into the knowledge base when it ends. Each K names a rule, a decision or a lesson, and the file it goes in; or says "nothing, because…" with the reason. In simple mode the K points to CONTEXT.md; in medium or full, to the matching file (rules.md, decisions.md, lessons.md, etc.).
+
+They are written together with the C and N, before building. If something went wrong along the way (a re-frozen acceptance, a failed CI, a badly written criterion), the lesson is mandatory: it is recorded in the base. The person can remove a K ("remove"): it is noted in the story with the why. A story does not move to Ready with an unmet K, and the orchestrator checks in the diff that the named file changed. The builder meets the K in the same work.
+
+To fill the base from the code in an advanced project there is the `rein-documentador` profile, on request from the person: it never runs on every story. It proposes file by file, separates evidence from assumptions and writes nothing without confirmation.
 
 ## Acceptance before implementation
 
@@ -80,6 +98,19 @@ If the person rejects the demo, go back to In progress and note the reason. Sile
 A delivery without a demo is half-finished work. With two stories in Ready, no new construction is delegated: the orchestrator proposes a demo session. Only the person can lift that limit, in writing and for one specific story.
 
 In the demo session, the orchestrator presents each story in Ready with its script criterion by criterion, the verified evidence and what is missing, and the person decides: Done, or back to In progress with the reason. If they prefer to postpone it, it goes back to Pending with the reason; there is no fifth state. At the end, STORIES.md and the state file reflect each decision.
+
+## Knowledge base
+
+A project chooses how much knowledge base it carries, with `reinstack install --context <mode>`:
+
+- `simple` (default): just CONTEXT.md. Enough for a small project.
+- `medium`: a `knowledge/` folder with rules.md, decisions.md and lessons.md. Worth it when rules and decisions no longer fit in CONTEXT.md.
+- `full`: also problem.md, scope.md, model.md, architecture.md and glossary.md. Worth it for long projects or several people.
+- a path: a base the project already has; CONTEXT.md links to it and nothing is created there.
+
+To go up: `reinstack update --context medium` or `full`. Going down is done by the person by hand: Rein neither deletes nor moves documents. The base files belong to the project: they are seeded if missing and never overwritten.
+
+The orchestrator reads the index in CONTEXT.md (the `<!-- rein:base -->` block) and opens only the file the story needs, not the whole base. What it learns goes into the matching file.
 
 ## Living documentation
 

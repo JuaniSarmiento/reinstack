@@ -1,5 +1,24 @@
 # Changelog
 
+## 1.5.0
+
+- Tono de socio: Rein deja de sonar a supervisor y habla como un compañero cercano y directo. Saluda por su nombre a la persona (si lo sabe) al arrancar la conversación y cuando vuelve después de una pausa, una vez y no en cada mensaje, y festeja lo que sale bien con el dato. Firme con el método desde el mismo lado, sin halagos vacíos. El método no cambia: llega con `reinstack global` (estilo de Claude y bloque de tono de Codex).
+
+## 1.4.0
+
+- Tercer rol `rein-documentador` (a pedido, nunca por historia): llena la base de conocimiento desde el código y Git, propone archivo por archivo separando evidencia de supuestos y no escribe nada sin confirmación. Se instala con `install` y `global`, y `update` lo suma a instalaciones 1.3.0 y anteriores (el manifiesto viejo, sin ese perfil, se acepta; un archivo ajeno en su ruta sigue siendo error).
+- Cierre de la base: cada historia trae K01… (qué regla, decisión o lección entra a la base, o «nada, porque…»), con campo nuevo en la plantilla de historias. Si algo salió mal, la lección es obligatoria; una historia no pasa a Lista con un K sin cumplir.
+- Tono: cada explicación técnica cierra con un párrafo simple.
+- Se quita la revisión adversarial: la búsqueda del error va en los criterios negativos (en L, por lista).
+
+## 1.3.0
+
+- Base de conocimiento: `install` y `update` aceptan `--contexto` (`--context`) con `simple` (por defecto, como hasta ahora), `media` (`conocimiento/` con reglas, decisiones y lecciones), `completa` (además problema, alcance, modelo, arquitectura y glosario) o la ruta de una base existente. El índice vive en CONTEXTO.md dentro de un bloque `<!-- rein:base -->`; Rein sólo escribe ahí. Los archivos se siembran si faltan, nunca se pisan y `uninstall` no los borra. Se puede subir de modo con `update --contexto`; bajar lo hace la persona a mano. El modo queda en el manifiesto (sin clave, `simple`). Sección «Base de conocimiento» en el método.
+
+## 1.2.0
+
+- Criterios negativos: cada historia trae, además de los C01…, criterios N01… (lo que no tiene que pasar: entrada inválida, algo que debe negarse, datos que no se tocan, correr dos veces, un caso borde). Se escriben y se congelan junto con los C, se ven fallar igual, y el orquestador se pregunta «¿qué implementación mala pasaría esto?». Escala por nivel: S al menos 1, M 2 o 3, L una lista corta. Sección «Criterios negativos» en el método, mención en el bloque global y en los perfiles, y campo nuevo en la plantilla de `HISTORIAS.md`. Sin agentes ni archivos nuevos.
+
 ## 1.1.0
 
 - Niveles de historia S, M y L: el nivel es el mayor entre dificultad y riesgo y decide la ceremonia (aceptación, quién construye, verificación y demo). Sección «Niveles» en el método y en el bloque global, columna «Nivel» y campo «Nivel y porqué» en `HISTORIAS.md`, y el orquestador propone el nivel con su porqué. Sube si la historia crece, nunca baja.

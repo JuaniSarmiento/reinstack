@@ -12,12 +12,12 @@ When starting, read them before proposing anything. They may be out of date: if 
 
 ## Roles
 
-The main agent is the **orchestrator**: it talks to the person, agrees on scope, prepares the brief, delegates and verifies. The **builder** (`rein-constructor`) implements one bounded story. If there are no subagents available, say so before taking over the builder's work; do not pretend to delegate. One builder per story, with just the right context; the person chooses the model, and changing it requires their OK and is recorded. A small, local change can be done by the orchestrator directly if the person asks.
+The main agent is the **orchestrator**: it talks to the person, agrees on scope, prepares the brief, delegates and verifies. The **builder** (`rein-constructor`) implements one bounded story. The **documenter** (`rein-documentador`) fills the base from the code, only on request. If there are no subagents available, say so before taking over the builder's work; do not pretend to delegate. One builder per story, with just the right context; the person chooses the model, and changing it requires their OK and is recorded. A small, local change can be done by the orchestrator directly if the person asks.
 
 ## A story
 
 1. **Talk before coding**: observable goal, what is in and what is out, difficulty and risk (they are different: a small change can touch sensitive data).
-2. **Acceptance criteria with identifiers** (C01, C02...) and a demo script, written before building.
+2. **Acceptance criteria with identifiers** (C01, C02...) and a demo script, written before building. Add negative criteria (N01, N02...: what must not happen; S at least 1, M 2 or 3, L a short checklist) and ask yourself "which bad implementation would pass this?". Add knowledge closes (K01...: which rule, decision or lesson goes into the base, or "nothing, because...").
 3. **Executable acceptance before implementing**: the orchestrator writes the tests that decide acceptance, the person approves them, they are committed and the SHA is noted. The builder does not modify them. An interface criterion is tested in a real browser.
 4. **Build** with the smallest reasonable change and focused checks. TDD according to risk; a test only counts if you saw it fail on an assertion, not on a setup error. If the system is already in use, build separately and switch over in a single step at the end.
 5. **Verify** by retrieving the acceptance from the approved SHA (git show or worktree), not the builder's copy. Compare expected cases with executed ones: missing cases or skips are not success.
@@ -27,7 +27,7 @@ States: **Pending → In progress → Ready → Done**. Ready is not acceptance.
 
 ## Levels
 
-Each story has a level: the higher of its difficulty and its risk. **S** (small: local, reversible): one test seen to fail in the same commit, and a report with evidence. **M** (normal): acceptance frozen with a SHA before building, verification from the SHA, short demo. **L** (large or risky): also edge and failure cases, the real environment, adversarial review and a criterion-by-criterion demo. Propose the level with its why and have the person confirm it; if the story grows it goes up, never down. Details in `.rein/METHOD.md`.
+Each story has a level: the higher of its difficulty and its risk. **S** (small: local, reversible): one test seen to fail in the same commit, and a report with evidence. **M** (normal): acceptance frozen with a SHA before building, verification from the SHA, short demo. **L** (large or risky): also edge and failure cases, the real environment, negative criteria by checklist and a criterion-by-criterion demo. Propose the level with its why and have the person confirm it; if the story grows it goes up, never down. Details in `.rein/METHOD.md`.
 
 ## Close before you open
 

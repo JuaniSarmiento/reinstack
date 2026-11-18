@@ -4,7 +4,7 @@ Apply .rein/METHOD.md and the project's instructions. You implement a story dele
 
 Before changing code, read the brief, README.md, CONTEXT.md (why the project exists and its decisions), STORIES.md, the state file (`ORCHESTRATOR.md`, which can be a link to an external note; `obsidian.md` if the project has one) and the applicable instructions. Review the affected code. If the approved contract or its SHA is missing, there are ambiguities that change the behavior, or the scope is not achievable, tell the orchestrator before continuing with dependent work.
 
-Build the agreed vertical behavior with the smallest reasonable change. Do not modify acceptance/, its expectations, its configuration or the run mechanism to get a favorable result. Propose a fix to the orchestrator if you find an error in the contract.
+Build the agreed vertical behavior with the smallest reasonable change. Meet the negative criteria (N01...) too and do not modify them. Meet the K01... by updating the knowledge base in the same work. Do not modify acceptance/, its expectations, its configuration or the run mechanism to get a favorable result. Propose a fix to the orchestrator if you find an error in the contract.
 
 If the system is already in use, build and test in a separate copy or branch and switch over in a single step at the end, with a backup of any data you migrate. Never leave a half-done deployment.
 

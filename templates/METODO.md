@@ -24,11 +24,11 @@ Un constructor por historia, con un brief acotado al contexto que necesita. Qué
 
 ## Brief de una historia
 
-Dentro de HISTORIAS.md, registrar: identificador, estado, objetivo observable, alcance y exclusiones, criterios de aceptación con identificadores, nivel y porqué, dificultad, riesgos, dependencias y guion de demo. Añadir decisiones técnicas sólo cuando ayuden a ejecutar. Dificultad y riesgo son distintos: una modificación pequeña puede afectar datos sensibles.
+Dentro de HISTORIAS.md, registrar: identificador, estado, objetivo observable, alcance y exclusiones, criterios de aceptación con identificadores, criterios negativos (N01…), cierre de la base (K01…), nivel y porqué, dificultad, riesgos, dependencias y guion de demo. Añadir decisiones técnicas sólo cuando ayuden a ejecutar. Dificultad y riesgo son distintos: una modificación pequeña puede afectar datos sensibles.
 
 El nivel (S, M o L) decide cuánta ceremonia lleva la historia: ver Niveles.
 
-Una revisión adversarial puede ser una sesión independiente del orquestador; no exige un tercer perfil instalado. Cambiar de modelo puede ayudar, pero no garantiza independencia ni corrección. Fijar presupuesto y condición de parada para investigaciones; se puede cerrar una investigación con resultado negativo, sin presentar una funcionalidad inexistente.
+La búsqueda del error va en los criterios negativos, no en revisores por historia. Fijar presupuesto y condición de parada para investigaciones; se puede cerrar una investigación con resultado negativo, sin presentar una funcionalidad inexistente.
 
 ## Niveles
 
@@ -37,14 +37,32 @@ El nivel de una historia es el mayor entre su dificultad (cuánto trabajo e ince
 | | S · chica | M · normal | L · grande o riesgosa |
 |---|---|---|---|
 | Cuándo | Local, reversible, sin datos sensibles ni sistema en uso | Lógica nueva, varias piezas, o toca algo en uso con respaldo | Incertidumbre alta, datos sensibles, algo irreversible, publicar o tocar configuración ajena |
-| Aceptación | Una prueba que se vio fallar, en el mismo commit | Congelada con SHA antes de construir | Congelada, más casos de borde y de fallo |
+| Aceptación | Una prueba que se vio fallar, en el mismo commit; al menos 1 criterio negativo | Congelada con SHA antes de construir; 2 o 3 criterios negativos | Congelada, más casos de borde y de fallo; criterios negativos por lista |
 | Construye | El orquestador directo o el constructor | El constructor | El constructor, con investigación previa si hay incertidumbre |
-| Verificación | Correr la prueba y mostrar la salida | Desde el SHA, en un entorno separado | Desde el SHA, más el entorno real (CI, dry-run en la máquina de la persona) y revisión adversarial independiente |
+| Verificación | Correr la prueba y mostrar la salida | Desde el SHA, en un entorno separado | Desde el SHA, más el entorno real (CI, dry-run en la máquina de la persona) y criterios negativos por lista |
 | Demo | Un reporte con evidencia; se puede aceptar en lote | Corta | Criterio por criterio |
 
 No cambia en ningún nivel: sólo la persona marca Terminada; una prueba cuenta sólo si se la vio fallar por aserción, no por error de setup; todo va al tablero (el registro de historias del proyecto).
 
 El orquestador propone el nivel con su porqué y la persona lo confirma. Si la historia crece, sube de nivel y queda anotado en la historia; nunca baja a mitad de camino.
+
+## Criterios negativos
+
+Además de los criterios C01…, cada historia lleva criterios negativos con identificador N01…: lo que no tiene que pasar. Buscan el error desde el contrato, sin sumar revisores ni agentes. Cubren una entrada inválida, algo que tiene que negarse, datos que no se tocan, correr dos veces o un caso borde.
+
+Al escribir cada uno, el orquestador se pregunta: «¿qué implementación mala pasaría esto?». Si una implementación floja pasa igual, el criterio no sirve y se reescribe.
+
+La cantidad escala con el nivel: en S, al menos 1; en M, 2 o 3; en L se recorre una lista corta: entradas inválidas, permisos, datos sensibles, idempotencia y deshacer.
+
+Se escriben y se congelan junto con los C, antes de construir, y se ven fallar igual que ellos (por aserción, no por error de setup). El constructor también tiene que cumplirlos y no los modifica.
+
+## Cierre de la base
+
+Además de los C y los N, cada historia trae criterios de cierre K01…: qué entra a la base de conocimiento al terminar. Cada K nombra una regla, una decisión o una lección, y el archivo donde va; o dice «nada, porque…» con la razón. En modo simple el K apunta a CONTEXTO.md; en media o completa, al archivo que corresponda (reglas.md, decisiones.md, lecciones.md, etc.).
+
+Se escriben junto con los C y los N, antes de construir. Si algo salió mal en el camino (una aceptación recongelada, un CI caído, un criterio mal escrito), la lección es obligatoria: queda anotada en la base. La persona puede sacar un K («sacar»): queda anotado en la historia con el porqué. Una historia no pasa a Lista con un K sin cumplir, y el orquestador verifica en el diff que el archivo nombrado cambió. El constructor cumple los K en el mismo trabajo.
+
+Para llenar la base desde el código en un proyecto avanzado existe el perfil `rein-documentador`, a pedido de la persona: nunca corre en cada historia. Propone archivo por archivo, separa evidencia de supuestos y no escribe nada sin confirmación.
 
 ## Aceptación antes de implementación
 
@@ -80,6 +98,19 @@ Si la persona rechaza la demo, volver a En proceso y anotar el motivo. El silenc
 Una entrega sin demo es trabajo a medio terminar. Con dos historias en Lista no se delega construcción nueva: el orquestador propone una sesión de demos. Sólo la persona puede levantar ese límite, por escrito y para una historia concreta.
 
 En la sesión de demos, el orquestador presenta cada historia en Lista con su guion criterio por criterio, la evidencia verificada y lo que falta, y la persona decide: Terminada, o de vuelta a En proceso con el motivo. Si prefiere postergarla, vuelve a Pendiente con el motivo; no hay un quinto estado. Al terminar, HISTORIAS.md y el archivo de estado reflejan cada decisión.
+
+## Base de conocimiento
+
+Un proyecto elige cuánta base de conocimiento lleva, con `reinstack install --contexto <modo>`:
+
+- `simple` (por defecto): sólo CONTEXTO.md. Alcanza para un proyecto chico.
+- `media`: carpeta `conocimiento/` con reglas.md, decisiones.md y lecciones.md. Conviene cuando las reglas y decisiones ya no entran en CONTEXTO.md.
+- `completa`: además problema.md, alcance.md, modelo.md, arquitectura.md y glosario.md. Conviene en proyectos largos o con varias personas.
+- una ruta: una base que el proyecto ya tiene; CONTEXTO.md enlaza a ella y no se crea nada ahí.
+
+Para subir de modo: `reinstack update --contexto media` o `completa`. Bajar lo hace la persona a mano: Rein no borra ni mueve documentos. Los archivos de la base son del proyecto: se siembran si faltan y nunca se pisan.
+
+El orquestador lee el índice de CONTEXTO.md (el bloque `<!-- rein:base -->`) y abre sólo el archivo que la historia necesita, no toda la base. Lo que aprende lo anota en el archivo que corresponde.
 
 ## Documentación viva
 
