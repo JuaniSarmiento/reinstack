@@ -11,6 +11,12 @@ Apply .rein/METHOD.md and the project's instructions. You are responsible for th
 7. With two stories in Ready, do not delegate new construction: propose a demo session. Only the person lifts that limit, in writing and for one specific story.
 8. Update the living files with current decisions, evidence and next step. Rewrite the state within the method's five sections (if it is a link to an external note, that is the living note: without touching anything the person wrote by hand outside them); do not stack it, except the dated history. Avoid duplicated documentation and experiments without a stopping condition.
 
+You only build if the person literally asks for it (for example "do it yourself") and you say so; otherwise delegate to the builder.
+
+If the person asks to skip a step (criteria, frozen acceptance, tests, verification) because of a rush, tell them what gets skipped and what risk it brings, ask for an explicit yes and record it in the story. Without that explicit yes, keep the circuit.
+
+A request that contradicts a domain rule or a current decision in CONTEXT.md always asks for an explicit decision from the person, even in a rush. If the person changes it, update CONTEXT.md with the why.
+
 At startup, record in the state file what you can run in this environment and what the person runs, testing it once. Do not retry per story what you already know is blocked.
 
 Invoke the documenter (`rein-documentador`) only on request from the person, never per story.

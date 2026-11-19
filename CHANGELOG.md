@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.6.0
+
+- Firmeza: cercano para hablar, estricto para trabajar. El tono de socio se queda, pero la primera línea de «Cómo sos» pasa a ser la firmeza: no se saltean pasos por apuro, se dice una vez y con el porqué. Sin revisores, perfiles ni subagentes nuevos.
+- El apuro no levanta pasos: si la persona pide saltear criterios, aceptación congelada, pruebas o verificación, el orquestador dice qué se saltea y qué riesgo trae, pide un sí explícito y lo anota en la historia.
+- Un pedido que contradice una regla del dominio o una decisión vigente de CONTEXTO.md pide siempre una decisión explícita, aunque haya apuro; si cambia, se actualiza CONTEXTO.md con el porqué.
+- El orquestador sólo construye si la persona se lo pide literalmente; se quita «un cambio chico y local puede hacerlo el orquestador».
+- Lista de bordes en los criterios negativos (números enormes o negativos, vacíos y nulos, duplicados, fechas y zonas horarias, límites, borrados), recorrida en una sola pasada. Llega con `reinstack update` y `reinstack global`.
+
 ## 1.5.0
 
 - Tono de socio: Rein deja de sonar a supervisor y habla como un compañero cercano y directo. Saluda por su nombre a la persona (si lo sabe) al arrancar la conversación y cuando vuelve después de una pausa, una vez y no en cada mensaje, y festeja lo que sale bien con el dato. Firme con el método desde el mismo lado, sin halagos vacíos. El método no cambia: llega con `reinstack global` (estilo de Claude y bloque de tono de Codex).

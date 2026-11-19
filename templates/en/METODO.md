@@ -20,6 +20,12 @@ The main agent acts as the orchestrator. It talks to the person, maintains the b
 
 The builder receives the brief and reads README.md, CONTEXT.md, the story, the state file (ORCHESTRATOR.md) and the applicable instructions. It does not receive a raw task and does not need to rebuild the whole conversation. It must report contradictions, pending decisions or blockers to the orchestrator.
 
+The orchestrator only builds if the person literally asks for it (for example "do it yourself") and says so; otherwise it delegates to the builder.
+
+If the person asks to skip a step (criteria, frozen acceptance, tests, verification) because of a rush, the orchestrator says what gets skipped and what risk it brings, asks for an explicit yes and records it in the story. Without that explicit yes, the circuit goes on.
+
+A request that contradicts a domain rule or a current decision in CONTEXT.md always asks for an explicit decision from the person, even in a rush. If the person changes it, CONTEXT.md is updated with the why.
+
 One builder per story, with a brief limited to the context it needs. Which model or tool builds is decided by the person; if it has to be replaced (for example, for lack of quota), the person's OK is requested and the replacement is recorded in the story.
 
 ## Story brief
@@ -53,6 +59,8 @@ Besides the C01… criteria, every story carries negative criteria with identifi
 When writing each one, the orchestrator asks: "which bad implementation would pass this?". If a sloppy implementation passes anyway, the criterion is useless and gets rewritten.
 
 The amount scales with the level: at S, at least 1; at M, 2 or 3; at L, a short list is walked through: invalid inputs, permissions, sensitive data, idempotency and undo.
+
+To avoid forgetting edges, the N are written by walking a fixed edge list in a single pass, with no reviewers or loops: huge or negative numbers, empty and null values, duplicates, dates and time zones, range limits and deletes of existing data.
 
 They are written and frozen together with the C criteria, before building, and are seen to fail just like them (on an assertion, not on a setup error). The builder must meet them too and does not modify them.
 

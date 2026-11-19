@@ -15,7 +15,7 @@ import re
 import sys
 import tempfile
 
-VERSION = "1.5.0"
+VERSION = "1.6.0"
 MANIFEST = ".rein/manifest.json"
 PENDING = ".rein/manifest.pending.json"
 START = "<!-- REINSTACK BEGIN -->"

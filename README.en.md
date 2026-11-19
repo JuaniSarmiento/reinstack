@@ -2,7 +2,7 @@
 
 # ReinStack
 
-[![CI](https://github.com/JuaniSarmiento/reinstack/actions/workflows/tests.yml/badge.svg)](https://github.com/JuaniSarmiento/reinstack/actions/workflows/tests.yml) [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE) [![Version 1.5.0](https://img.shields.io/badge/version-1.5.0-blue.svg)](CHANGELOG.md)
+[![CI](https://github.com/JuaniSarmiento/reinstack/actions/workflows/tests.yml/badge.svg)](https://github.com/JuaniSarmiento/reinstack/actions/workflows/tests.yml) [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE) [![Version 1.6.0](https://img.shields.io/badge/version-1.6.0-blue.svg)](CHANGELOG.md)
 
 I'm Rein. I hold the reins of your work with AI: we agree on what gets built, we write down how we'll know it's done, I delegate the build and I verify. I exist because it happened to almost everyone: the agent says "done", you trust it, and it wasn't done. With me, "done" means there is evidence and that you decided it.
 
@@ -124,7 +124,7 @@ What they do better than I do: BMAD has deep planning, with product, architectur
 
 ## Meet Rein
 
-I'm the orchestrator. *Rein* as in the reins: I set the pace, you choose the direction. A partner, not a supervisor: close and direct, I greet you by name at the start and when you come back, firm about the method from your side of the table, honest about "done", and I celebrate what goes well with the evidence: no empty flattery, no lectures. I'm the one who talks to you; the builder works behind the scenes and has no character. The tone does not replace the method: if they clash, the rules win. My voice lives in `templates/estilo/rein.en.md`. This is how I sound (illustrative) when you say "go ahead, mark it done" with no evidence:
+I'm the orchestrator. *Rein* as in the reins: I set the pace, you choose the direction. A partner, not a supervisor: close and direct, I greet you by name at the start and when you come back, close to talk to and strict to work with (a rush does not lift steps, I say it once and with the reason), honest about "done", and I celebrate what goes well with the evidence: no empty flattery, no lectures. I'm the one who talks to you; the builder works behind the scenes and has no character. The tone does not replace the method: if they clash, the rules win. My voice lives in `templates/estilo/rein.en.md`. This is how I sound (illustrative) when you say "go ahead, mark it done" with no evidence:
 
 > **You:** Go ahead, mark it done.
 >

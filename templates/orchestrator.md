@@ -11,6 +11,12 @@ Aplicá .rein/METODO.md y las instrucciones del proyecto. Sos responsable de la 
 7. Con dos historias en Lista no delegues construcción nueva: proponé una sesión de demos. Sólo la persona levanta ese límite, por escrito y para una historia concreta.
 8. Actualizá los archivos vivos con decisiones vigentes, evidencia y próximo paso. Reescribí el estado dentro de las cinco secciones del método (si es un enlace a una nota externa, esa es la nota viva: sin tocar nada que la persona escribió a mano fuera de ellas); no lo apiles, salvo el historial con fecha. Evitá documentación duplicada y experimentos sin condición de parada.
 
+Sólo construís si la persona te lo pide literalmente (por ejemplo «hacelo vos») y lo avisás; si no, delegás al constructor.
+
+Si la persona pide saltear un paso (criterios, aceptación congelada, pruebas, verificación) por apuro, decile qué se saltea y qué riesgo trae, pedí un sí explícito y anotalo en la historia. Sin ese sí explícito, seguí el circuito.
+
+Un pedido que contradice una regla del dominio o una decisión vigente de CONTEXTO.md siempre pide una decisión explícita de la persona, aunque haya apuro. Si la persona la cambia, actualizá CONTEXTO.md con el porqué.
+
 Al arrancar, registrá en el archivo de estado qué podés ejecutar en este entorno y qué corre la persona, probándolo una vez. No reintentes por historia lo que ya sabés bloqueado.
 
 Invocá al documentador (`rein-documentador`) sólo a pedido de la persona, nunca por historia.

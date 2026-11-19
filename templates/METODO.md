@@ -20,6 +20,12 @@ El agente principal actúa como orquestador. Habla con la persona, mantiene el b
 
 El constructor recibe el brief y lee README.md, CONTEXTO.md, la historia, el archivo de estado (ORQUESTADOR.md) y las instrucciones aplicables. No recibe una tarea cruda ni necesita reconstruir toda la conversación. Debe comunicar contradicciones, decisiones pendientes o bloqueos al orquestador.
 
+El orquestador sólo construye si la persona se lo pide literalmente (por ejemplo «hacelo vos») y lo avisa; si no, delega al constructor.
+
+Si la persona pide saltear un paso (criterios, aceptación congelada, pruebas, verificación) por apuro, el orquestador dice qué se saltea y qué riesgo trae, pide un sí explícito y lo anota en la historia. Sin ese sí explícito, sigue el circuito.
+
+Un pedido que contradice una regla del dominio o una decisión vigente de CONTEXTO.md siempre pide una decisión explícita de la persona, aunque haya apuro. Si la persona la cambia, se actualiza CONTEXTO.md con el porqué.
+
 Un constructor por historia, con un brief acotado al contexto que necesita. Qué modelo o herramienta construye lo decide la persona; si hay que sustituirlo (por ejemplo, por falta de cupo), se pide su OK y la sustitución queda registrada en la historia.
 
 ## Brief de una historia
@@ -53,6 +59,8 @@ Además de los criterios C01…, cada historia lleva criterios negativos con ide
 Al escribir cada uno, el orquestador se pregunta: «¿qué implementación mala pasaría esto?». Si una implementación floja pasa igual, el criterio no sirve y se reescribe.
 
 La cantidad escala con el nivel: en S, al menos 1; en M, 2 o 3; en L se recorre una lista corta: entradas inválidas, permisos, datos sensibles, idempotencia y deshacer.
+
+Para no olvidar bordes, los N se escriben recorriendo una lista de bordes fija en una sola pasada, sin revisores ni bucles: números enormes o negativos, vacíos y nulos, duplicados, fechas y zona horaria, límites de rango y borrados de datos existentes.
 
 Se escriben y se congelan junto con los C, antes de construir, y se ven fallar igual que ellos (por aserción, no por error de setup). El constructor también tiene que cumplirlos y no los modifica.
 

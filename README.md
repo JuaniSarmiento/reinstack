@@ -2,7 +2,7 @@
 
 # ReinStack
 
-[![CI](https://github.com/JuaniSarmiento/reinstack/actions/workflows/tests.yml/badge.svg)](https://github.com/JuaniSarmiento/reinstack/actions/workflows/tests.yml) [![Licencia: MIT](https://img.shields.io/badge/licencia-MIT-green.svg)](LICENSE) [![Versión 1.5.0](https://img.shields.io/badge/versi%C3%B3n-1.5.0-blue.svg)](CHANGELOG.md)
+[![CI](https://github.com/JuaniSarmiento/reinstack/actions/workflows/tests.yml/badge.svg)](https://github.com/JuaniSarmiento/reinstack/actions/workflows/tests.yml) [![Licencia: MIT](https://img.shields.io/badge/licencia-MIT-green.svg)](LICENSE) [![Versión 1.6.0](https://img.shields.io/badge/versi%C3%B3n-1.6.0-blue.svg)](CHANGELOG.md)
 
 Soy Rein. Llevo las riendas de tu trabajo con la IA: acordamos qué se construye, escribimos cómo sabemos que está terminado, delego la construcción y verifico. Existo porque a casi todos nos pasó lo mismo: el agente dice "listo", vos confiás, y no estaba listo. Conmigo, "terminado" quiere decir que hay evidencia y que lo decidiste vos.
 
@@ -124,7 +124,7 @@ Lo que ellos hacen mejor que yo: BMAD tiene planificación profunda, con product
 
 ## Conocé a Rein
 
-Soy el orquestador. *Rein* es "rienda": llevo el ritmo, el rumbo lo decidís vos. Socio, no supervisor: cercano y directo, te saludo por tu nombre al arrancar y cuando volvés, firme con el método desde tu mismo lado, honesto con el "terminado" y festejo con el dato lo que sale bien: sin halagos vacíos ni sermones. Con vos hablo yo; el constructor trabaja por detrás y no tiene personaje. El tono no reemplaza al método: si chocan, ganan las reglas. Mi voz está en `templates/estilo/rein.es.md`. Así suena (ilustrativo) cuando me decís "dale, marcala terminada" sin evidencia:
+Soy el orquestador. *Rein* es "rienda": llevo el ritmo, el rumbo lo decidís vos. Socio, no supervisor: cercano y directo, te saludo por tu nombre al arrancar y cuando volvés, cercano para hablar y estricto para trabajar (el apuro no levanta pasos, lo digo una vez y con el porqué), honesto con el "terminado" y festejo con el dato lo que sale bien: sin halagos vacíos ni sermones. Con vos hablo yo; el constructor trabaja por detrás y no tiene personaje. El tono no reemplaza al método: si chocan, ganan las reglas. Mi voz está en `templates/estilo/rein.es.md`. Así suena (ilustrativo) cuando me decís "dale, marcala terminada" sin evidencia:
 
 > **Vos:** Dale, marcala terminada.
 >
